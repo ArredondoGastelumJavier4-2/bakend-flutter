@@ -27,7 +27,6 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True, null=True)
     precio = models.DecimalField(max_digits=8, decimal_places=2)
-    costo = models.DecimalField(max_digits=8, decimal_places=2)
     estado = models.CharField(max_length=10, choices=ESTADOS, default='activo')
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
 
