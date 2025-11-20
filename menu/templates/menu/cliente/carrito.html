@@ -1,0 +1,70 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Carrito{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    {% if items %}
+    <div class="bg-white shadow-lg rounded p-4 mx-auto" style="max-width: 700px;">
+
+        <!-- Encabezado -->
+        <div class="d-flex align-items-center mb-3">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 60px;" class="me-3">
+            <div>
+                <h4 class="fw-bold mb-0">Tu pedido</h4>
+                <small class="text-muted">{{ items|length }} artículo{% if items|length > 1 %}s{% endif %}</small>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Lista de productos -->
+        {% for item in items %}
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center">
+                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}"
+                     class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                <div>
+                    <span class="fw-semibold">{{ item.cantidad }}x</span>
+                    <span>{{ item.producto.nombre }}</span><br>
+                    <a href="{% url 'eliminar_carrito' item.id %}" class="small text-danger text-decoration-none">Eliminar</a>
+                </div>
+            </div>
+            <span class="text-success fw-semibold fs-5">${{ item.subtotal }}</span>
+        </div>
+        {% endfor %}
+
+        <hr>
+
+        <!-- Subtotal -->
+        <div class="d-flex justify-content-between mb-3">
+            <span class="fw-semibold">Subtotal</span>
+            <span class="fw-bold text-success">${{ total }}</span>
+        </div>
+
+        <!-- Botón -->
+        <div class="text-center mt-4">
+            <a href="{% url 'pago_tarjeta' %}" 
+               class="btn btn-dark w-100 py-3 fs-5 fw-semibold shadow-sm">
+                Proceder al pago 💳
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="text-center py-5">
+        <h4 class="text-muted mb-3">🛒 Tu carrito está vacío</h4>
+        <a href="{% url 'cliente_dashboard' %}" class="btn btn-primary">Volver al menú</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .btn-dark:hover {
+        background-color: #000;
+    }
+</style>
+{% endblock %}

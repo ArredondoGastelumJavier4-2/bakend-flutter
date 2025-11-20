@@ -1,0 +1,281 @@
+/* ============================
+   ESTILOS GENERALES
+============================ */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ============================
+   NAVBAR RESPONSIVO
+============================ */
+.navbar {
+    background: #ffffff;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .navbar-menu {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* ============================
+   GRID DE PRODUCTOS
+============================ */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 15px;
+}
+
+@media (max-width: 992px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================
+   TARJETAS DE PRODUCTO
+============================ */
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card img {
+    border-radius: 10px;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+/* ============================
+   BOTONES
+============================ */
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+/* ============================
+   FORMULARIOS RESPONSIVOS
+============================ */
+form {
+    width: 100%;
+    max-width: 450px;
+    margin: auto;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* ============================
+   TABLAS RESPONSIVAS
+============================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+}
+
+@media (max-width: 700px) {
+    table {
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================
+   AVATARES RECURSIVOS
+============================ */
+.avatar-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+    .avatar-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .avatar-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.avatar-option {
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+}
+
+.avatar-option input {
+    display: none;
+}
+
+.avatar-option img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: 0.25s;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+.avatar-option:hover img {
+    transform: scale(1.1);
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+}
+
+.avatar-option input:checked + img {
+    border-color: #0d6efd;
+    box-shadow: 0 0 8px rgba(13,110,253,0.7);
+    transform: scale(1.15);
+}
+
+/* ===== CATEGORÍAS HORIZONTALES TIPO UBER EATS ===== */
+.categorias-scroll {
+    display: flex;
+    gap: 25px;
+    padding: 15px 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #eee;
+}
+
+.categoria-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #222;
+    font-weight: 500;
+    padding: 5px 0;
+}
+
+.categoria-item:hover {
+    color: #0d6efd;
+}
+
+.categoria-item .emoji {
+    font-size: 22px;
+}
+
+/* ===== TARJETAS DE PRODUCTO ===== */
+.producto-img {
+    height: 180px;
+    object-fit: cover;
+}
+
+.producto-card {
+    min-height: 350px;
+}
+
+.precio {
+    font-weight: bold;
+    color: #444;
+}
+/* Centrar categorías si no hay scroll */
+.categorias-scroll {
+    display: flex;
+    gap: 25px;
+    padding: 15px 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #eee;
+    justify-content: center; /* 🔥 CENTRADO */
+}
+
+.perfil-nav {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 8px;
+}
+
+.perfil-nav {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Centrado de categorías Uber Eats */
+.categorias-scroll {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    padding: 15px 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}

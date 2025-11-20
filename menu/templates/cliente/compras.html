@@ -1,0 +1,20 @@
+{% extends 'menu/base.html' %}
+{% block title %}Mis compras{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Historial de compras</h2>
+
+
+{% if pedidos %}
+<div class="space-y-4">
+{% for pedido in pedidos %}
+<div class="bg-white shadow rounded p-4">
+<h3 class="font-semibold">Pedido #{{ pedido.id }} — {{ pedido.fecha }}</h3>
+<p>Total: ${{ pedido.total }}</p>
+<p class="text-sm text-gray-600">Estado: {{ pedido.estado }}</p>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<p class="text-gray-600">Aún no has realizado compras.</p>
+{% endif %}
+{% endblock %}

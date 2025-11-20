@@ -1,0 +1,95 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Mi perfil{% endblock %}
+
+{% block content %}
+
+<div class="container d-flex flex-column align-items-center mt-4">
+
+    <h2 class="mb-4">Mi perfil</h2>
+
+    <!-- Imagen actual -->
+    {% if perfil.foto %}
+        <img src="{{ perfil.foto.url }}" alt="Foto de perfil"
+             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
+    {% elif perfil.avatar_default %}
+        <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar actual"
+             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
+    {% else %}
+        <img src="{% static 'images/imagen01.png' %}" alt="Avatar por defecto"
+             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data"
+          class="bg-white shadow p-4 rounded w-100" style="max-width: 500px;">
+        {% csrf_token %}
+
+        <label class="form-label">Nombre</label>
+        <input class="form-control mb-3" type="text" name="first_name" value="{{ user.first_name }}">
+
+        <label class="form-label">Apellido</label>
+        <input class="form-control mb-3" type="text" name="last_name" value="{{ user.last_name }}">
+
+        <label class="form-label">Correo</label>
+        <input class="form-control mb-3" type="email" name="email" value="{{ user.email }}">
+
+        <label class="form-label">Cambiar foto</label>
+        <input class="form-control mb-3" type="file" name="foto" accept="image/*">
+
+        <label class="form-label">Elegir avatar</label>
+        <div class="avatar-container">
+            {% for i in "12345" %}
+                <label class="avatar-option">
+                    <input type="radio" name="avatar_default" value="imagen0{{ i }}.png"
+                           {% if perfil.avatar_default == "imagen0"|add:i|add:".png" %}checked{% endif %}>
+                    <img src="{% static 'images/imagen0' %}{{ i }}.png" alt="Avatar {{ i }}">
+                </label>
+            {% endfor %}
+        </div>
+
+        <label class="form-label mt-3">Nueva contraseña (opcional)</label>
+        <input class="form-control mb-3" type="password" name="password">
+
+        <button class="btn btn-success w-100 mt-2">Guardar cambios</button>
+    </form>
+</div>
+
+<!-- 🪞 Vista previa instantánea -->
+<script>
+document.querySelectorAll('input[name="avatar_default"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const selected = this.value;
+        document.getElementById('preview-img').src = `/static/images/${selected}`;
+    });
+});
+</script>
+
+<style>
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+.avatar-option input {
+    display: none;
+}
+.avatar-option img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.avatar-option input:checked + img {
+    border-color: #28a745;
+    transform: scale(1.15);
+}
+.avatar-option img:hover {
+    transform: scale(1.1);
+}
+</style>
+
+{% endblock %}

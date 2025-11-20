@@ -1,0 +1,136 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Perfil del Administrador{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="bg-white shadow-lg rounded p-5 mx-auto text-center" style="max-width: 600px;">
+        <h2 class="fw-bold mb-4">👨‍💼 Perfil del Administrador</h2>
+
+        <form method="POST" enctype="multipart/form-data" id="perfilForm">
+            {% csrf_token %}
+
+            <!-- FOTO ACTUAL -->
+            <div class="d-flex flex-column align-items-center mb-4">
+                {% if perfil.foto %}
+                    <img src="{{ perfil.foto.url }}" alt="Foto de perfil" id="previewFoto"
+                         class="rounded-circle shadow mb-3 perfil-foto">
+                {% elif perfil.avatar_default %}
+                    <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar"
+                         id="previewFoto" class="rounded-circle shadow mb-3 perfil-foto">
+                {% else %}
+                    <img src="{% static 'images/imagen01.png' %}" alt="Por defecto"
+                         id="previewFoto" class="rounded-circle shadow mb-3 perfil-foto">
+                {% endif %}
+
+                <div class="mt-2 w-75">
+                    <label class="form-label fw-semibold">Cambiar foto</label>
+                    <input type="file" name="foto" id="fotoInput" class="form-control">
+                </div>
+            </div>
+
+            <!-- AVATARES DEFAULT -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">O elegir un avatar predeterminado</label>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% for i in "12345" %}
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar_default" value="imagen0{{ i }}.png"
+                                   {% if perfil.avatar_default == "imagen0"|add:i|add:".png" %}checked{% endif %}
+                                   class="d-none avatar-radio">
+                            <img src="{% static 'images/imagen0' %}{{ i }}.png"
+                                 alt="Avatar {{ i }}"
+                                 class="rounded-circle avatar-option {% if perfil.avatar_default == 'imagen0'|add:i|add:'.png' %}avatar-selected{% endif %}">
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- DATOS PERSONALES -->
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold">Nombre</label>
+                <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}">
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold">Apellidos</label>
+                <input type="text" name="last_name" class="form-control" value="{{ request.user.last_name }}">
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold">Correo electrónico</label>
+                <input type="email" name="email" class="form-control" value="{{ request.user.email }}">
+            </div>
+
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold">Teléfono</label>
+                <input type="text" name="telefono" class="form-control" value="{{ perfil.telefono }}">
+            </div>
+
+            <!-- CONTRASEÑA -->
+            <div class="mb-3 text-start">
+                <label class="form-label fw-semibold">Nueva contraseña</label>
+                <input type="password" name="password" class="form-control" placeholder="Deja vacío si no deseas cambiarla">
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 py-2 mt-3 fw-semibold">
+                💾 Guardar cambios
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .perfil-foto {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 4px solid #eee;
+    }
+    .avatar-option {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border: 3px solid transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .avatar-option:hover {
+        transform: scale(1.1);
+        border-color: #198754;
+    }
+    .avatar-selected {
+        border-color: #28a745;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
+    }
+</style>
+
+<script>
+    // ✅ Preview instantáneo al subir nueva foto
+    document.getElementById('fotoInput').addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewFoto').src = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+    // ✅ Selección de avatar (cambia visualmente y actualiza el preview)
+    document.querySelectorAll('.avatar-option').forEach(img => {
+        img.addEventListener('click', () => {
+            // deseleccionar todos
+            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('avatar-selected'));
+            // seleccionar este
+            img.classList.add('avatar-selected');
+            // marcar el radio asociado
+            img.previousElementSibling.checked = true;
+            // actualizar el preview
+            document.getElementById('previewFoto').src = img.src;
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'menu/base.html' %}
+{% block title %}Pago con tarjeta{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-semibold mb-4">Pago con tarjeta</h2>
+<form method="POST" class="bg-white shadow p-6 rounded w-full max-w-lg">
+{% csrf_token %}
+<label class="block mb-2">Número de tarjeta</label>
+<input class="w-full border rounded p-2 mb-4" type="text" name="numero" required>
+
+
+<label class="block mb-2">Fecha de expiración</label>
+<input class="w-full border rounded p-2 mb-4" type="text" name="exp" placeholder="MM/AA" required>
+
+
+<label class="block mb-2">CVV</label>
+<input class="w-full border rounded p-2 mb-4" type="password" name="cvv" required>
+
+
+<button class="bg-green-600 text-white px-4 py-2 rounded">Confirmar pago</button>
+</form>
+{% endblock %}

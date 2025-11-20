@@ -1,0 +1,22 @@
+{% extends 'menu/base.html' %}
+{% block title %}Categoría{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">{{ titulo }}</h2>
+
+<form method="POST" class="shadow p-4 bg-white rounded">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" value="{{ categoria.nombre }}" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <textarea name="descripcion" class="form-control">{{ categoria.descripcion }}</textarea>
+    </div>
+
+    <button class="btn btn-success">Guardar</button>
+</form>
+{% endblock %}

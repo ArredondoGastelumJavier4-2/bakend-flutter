@@ -1,0 +1,41 @@
+{% extends 'menu/base.html' %}
+{% block title %}Detalle del Pedido{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Pedido #{{ pedido.id }}</h2>
+
+<p><strong>Cliente:</strong> {{ pedido.cliente.username }}</p>
+<p><strong>Estado:</strong> {{ pedido.estatus }}</p>
+<p><strong>Total:</strong> ${{ pedido.total }}</p>
+<p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+
+<h3 class="mt-4">Productos:</h3>
+<table class="table bg-white shadow">
+    <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Notas</th>
+    </tr>
+    {% for item in pedido.detalles.all %}
+    <tr>
+        <td>{{ item.producto.nombre }}</td>
+        <td>{{ item.cantidad }}</td>
+        <td>${{ item.subtotal }}</td>
+        <td>{{ item.notas }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form method="POST" class="mt-3">
+    {% csrf_token %}
+    <label class="form-label">Cambiar estado:</label>
+    <select name="estatus" class="form-control mb-3">
+        <option value="activo">Activo</option>
+        <option value="listo">Listo</option>
+        <option value="entregado">Entregado</option>
+    </select>
+
+    <button class="btn btn-success">Actualizar estado</button>
+</form>
+{% endblock %}

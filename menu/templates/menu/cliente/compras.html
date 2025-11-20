@@ -1,0 +1,42 @@
+{% extends 'menu/base.html' %}
+{% block title %}Mis compras{% endblock %}
+{% block content %}
+
+<h2 class="text-2xl fw-bold mb-4">Mis pedidos</h2>
+
+{% if pedidos %}
+<div class="d-flex flex-column gap-3">
+
+    {% for pedido in pedidos %}
+    <div class="bg-white shadow-sm p-4 rounded border position-relative">
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-semibold mb-0">Pedido #{{ pedido.id }}</h5>
+            {% if pedido.estatus == "activo" %}
+            <span class="badge bg-warning text-dark">Activo</span>
+            {% elif pedido.estatus == "listo" %}
+            <span class="badge bg-info text-dark">Listo</span>
+            {% elif pedido.estatus == "entregado" %}
+            <span class="badge bg-success">Entregado</span>
+            {% endif %}
+        </div>
+
+        <p class="text-muted mb-1">
+            <small>{{ pedido.fecha|date:"d/m/Y H:i" }}</small>
+        </p>
+        <p class="mb-1 fw-semibold">Total: ${{ pedido.total }}</p>
+
+        <div class="d-flex justify-content-end">
+            <a href="{% url 'pedido_detalle_cliente' pedido.id %}" class="btn btn-outline-dark btn-sm">
+                Ver detalles
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<p class="text-muted mt-3">Aún no has realizado compras.</p>
+{% endif %}
+
+{% endblock %}

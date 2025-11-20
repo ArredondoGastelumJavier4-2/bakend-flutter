@@ -1,0 +1,85 @@
+{% extends "menu/base.html" %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- ===== CATEGORÍAS ESTILO UBER EATS ===== -->
+    <div class="categorias-scroll mb-5">
+
+        {% for cat in categorias %}
+            <a href="{% url 'categoria_detalle' cat.id %}" class="categoria-item">
+
+                {% if cat.id == 1 %}
+                    <span class="emoji">🔥</span>
+                {% elif cat.id == 2 %}
+                    <span class="emoji">🍲</span>
+                {% elif cat.id == 3 %}
+                    <span class="emoji">🌮</span>
+                {% elif cat.id == 4 %}
+                    <span class="emoji">🍹</span>
+                {% elif cat.id == 5 %}
+                    <span class="emoji">🍮</span>
+                {% endif %}
+
+                <span class="texto">{{ cat.nombre }}</span>
+
+            </a>
+        {% endfor %}
+
+    </div>
+
+    <!-- ===== SECCIONES DE CATEGORÍAS (3 productos + Ver más) ===== -->
+    {% for item in data_categorias %}
+        <div class="mb-5">
+
+            <!-- TÍTULO + BOTÓN -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h4>
+                    {% if item.categoria.id == 1 %}
+                        🔥
+                    {% elif item.categoria.id == 2 %}
+                        🍲
+                    {% elif item.categoria.id == 3 %}
+                        🌮
+                    {% elif item.categoria.id == 4 %}
+                        🍹
+                    {% elif item.categoria.id == 5 %}
+                        🍮
+                    {% endif %}
+                    {{ item.categoria.nombre }}
+                </h4>
+
+                <a href="{% url 'categoria_detalle' item.categoria.id %}" class="btn btn-link">
+                    Ver más →
+                </a>
+            </div>
+
+            <!-- LISTA DE PRODUCTOS -->
+            <div class="row">
+                {% for prod in item.productos %}
+                    <div class="col-md-4">
+                        <div class="card mb-3 shadow-sm producto-card">
+                            <img src="{{ prod.imagen.url }}" class="card-img-top producto-img">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ prod.nombre }}</h5>
+                                <p class="m-0 precio">${{ prod.precio }}</p>
+                                <a href="{% url 'producto_detalle' prod.id %}" class="btn btn-sm btn-primary mt-2">
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

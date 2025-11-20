@@ -1,0 +1,69 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+
+<h2 class="text-2xl fw-bold mb-4">Panel de Administración</h2>
+
+<div class="row g-4">
+
+    <!-- Clientes -->
+    <div class="col-md-3">
+        <div class="card text-center shadow-lg border-0" style="background-color: #ffe8d6;">
+            <div class="card-body">
+                <div class="fs-1 mb-2">👥</div>
+                <h5 class="card-title fw-bold">Clientes</h5>
+                <p class="display-6 fw-semibold text-dark">{{ clientes }}</p>
+                <a href="/admin_panel/clientes/" class="btn btn-outline-dark mt-2">
+                    Ver clientes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos -->
+    <div class="col-md-3">
+        <div class="card text-center shadow-lg border-0" style="background-color: #d8f3dc;">
+            <div class="card-body">
+                <div class="fs-1 mb-2">📦</div>
+                <h5 class="card-title fw-bold">Productos</h5>
+                <p class="display-6 fw-semibold text-dark">{{ productos }}</p>
+                <a href="/admin_panel/productos/" class="btn btn-outline-dark mt-2">
+                    Gestionar productos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categorías -->
+    <div class="col-md-3">
+        <div class="card text-center shadow-lg border-0" style="background-color: #cce3ff;">
+            <div class="card-body">
+                <div class="fs-1 mb-2">🗂</div>
+                <h5 class="card-title fw-bold">Categorías</h5>
+                <p class="display-6 fw-semibold text-dark">{{ categorias }}</p>
+                <a href="/admin_panel/categorias/" class="btn btn-outline-dark mt-2">
+                    Ver categorías
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pedidos -->
+    <div class="col-md-3">
+        <div class="card text-center shadow-lg border-0" style="background-color: #fff3cd;">
+            <div class="card-body">
+                <div class="fs-1 mb-2">🧾</div>
+                <h5 class="card-title fw-bold">Pedidos</h5>
+                <p class="display-6 fw-semibold text-dark">{{ pedidos }}</p>
+                <a href="/admin_panel/pedidos/" class="btn btn-outline-dark mt-2">
+                    Ver pedidos
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

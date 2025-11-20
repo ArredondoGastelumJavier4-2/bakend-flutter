@@ -1,0 +1,52 @@
+{% extends 'menu/base.html' %}
+{% block title %}Pedido #{{ pedido.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="bg-white p-4 shadow-sm rounded">
+        <h3 class="fw-bold mb-3">Pedido #{{ pedido.id }}</h3>
+        <p class="text-muted mb-1">
+            Fecha: {{ pedido.fecha|date:"d/m/Y H:i" }}
+        </p>
+        <p class="mb-3">
+            Estado:
+            {% if pedido.estatus == "activo" %}
+                <span class="badge bg-warning text-dark">Activo</span>
+            {% elif pedido.estatus == "listo" %}
+                <span class="badge bg-info text-dark">Listo</span>
+            {% elif pedido.estatus == "entregado" %}
+                <span class="badge bg-success">Entregado</span>
+            {% endif %}
+        </p>
+
+        <hr>
+
+        <h5 class="fw-semibold mb-3">Productos del pedido</h5>
+        {% for item in detalles %}
+        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+            <div>
+                <strong>{{ item.producto.nombre }}</strong><br>
+                <small class="text-muted">Cantidad: {{ item.cantidad }}</small>
+            </div>
+            <div>
+                <span class="fw-semibold">${{ item.cantidad|floatformat:0|add:"0"|floatformat:2 }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">No hay productos en este pedido.</p>
+        {% endfor %}
+
+        <hr>
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold">Total:</h5>
+            <h4 class="text-success fw-bold">${{ pedido.total }}</h4>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'compras_cliente' %}" class="btn btn-outline-dark">
+                ← Volver a mis pedidos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

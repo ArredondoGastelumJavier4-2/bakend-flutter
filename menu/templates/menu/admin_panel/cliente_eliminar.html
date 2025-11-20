@@ -1,0 +1,17 @@
+{% extends 'menu/base.html' %}
+{% block title %}Eliminar Cliente{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Eliminar Cliente</h2>
+
+<div class="alert alert-danger">
+    ¿Seguro que deseas eliminar al cliente <strong>{{ cliente.username }}</strong>?  
+    Esto eliminará sus pedidos también.
+</div>
+
+<form method="POST">
+    {% csrf_token %}
+    <button class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'cliente_lista' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Categorías{% endblock %}
+
+{% block content %}
+
+<h2 class="text-2xl font-bold mb-4">Categorías</h2>
+
+<a href="{% url 'categoria_agregar' %}" class="btn btn-primary mb-3">Agregar Categoría</a>
+
+<table class="table table-hover shadow bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Productos</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for categoria in categorias %}
+        <tr>
+            <td class="fw-bold">{{ categoria.nombre }}</td>
+
+            <!-- CANTIDAD DE PRODUCTOS -->
+            <td>
+                <span class="badge bg-info text-dark">
+                    {{ categoria.producto_set.count }} producto(s)
+                </span>
+            </td>
+
+            <!-- BOTÓN PARA VER DESCRIPCIÓN -->
+            <td>
+                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#descripcionModal{{ categoria.id }}">
+                    Ver descripción
+                </button>
+            </td>
+
+            <!-- ACCIONES -->
+            <td>
+                <a href="{% url 'categoria_editar' categoria.id %}" class="text-primary">Editar</a> |
+                <a href="{% url 'categoria_eliminar' categoria.id %}" class="text-danger">Eliminar</a>
+            </td>
+        </tr>
+
+        <!-- MODAL DE DESCRIPCIÓN -->
+        <div class="modal fade" id="descripcionModal{{ categoria.id }}" tabindex="-1"
+            aria-labelledby="descripcionLabel{{ categoria.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="descripcionLabel{{ categoria.id }}">
+                            {{ categoria.nombre }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="text-muted">
+                            {{ categoria.descripcion }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

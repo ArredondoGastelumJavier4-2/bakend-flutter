@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Menu Digital{% endblock %}</title>
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+</head>
+
+<body>
+
+    <!-- =============================
+        NAVBAR PRINCIPAL
+    ============================== -->
+    <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+        <div class="container-fluid">
+
+            <!-- LOGO -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 40px; margin-right: 10px;">
+                Menu Digital
+            </a>
+
+            <!-- BOTONES ADMIN (solo si es staff) -->
+            {% if user.is_authenticated and user.is_staff %}
+            <a href="/admin_panel/reportes/ventas/" class="nav-link text-light fw-semibold ms-3">
+                📈 Reporte de Ventas
+            </a>
+            <a href="/admin_panel/" class="nav-link text-light fw-semibold ms-3">
+                🏠 Dashboard
+            </a>
+            {% endif %}
+
+            <!-- BOTÓN RESPONSIVE -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- CONTENIDO NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <!-- BUSCADOR (solo clientes) -->
+                {% if user.is_authenticated and not user.is_staff %}
+                <form method="GET" action="{% url 'cliente_dashboard' %}" class="d-flex mx-auto" style="width: 45%;">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar productos..."
+                           value="{{ request.GET.q }}">
+                    <button class="btn btn-primary" type="submit">🔍</button>
+                </form>
+                {% endif %}
+
+                <!-- PERFIL Y CARRITO -->
+                <ul class="navbar-nav ms-auto align-items-center">
+
+                    {% if user.is_authenticated and not user.is_staff %}
+                    <!-- ÍCONO CARRITO -->
+                    <li class="nav-item me-3 position-relative">
+                        <a href="{% url 'carrito' %}" class="nav-link text-light">
+                            🛒
+                            {% if carrito_items_count and carrito_items_count > 0 %}
+                                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                                    {{ carrito_items_count }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                    <!-- PERFIL -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="perfilDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                            <span class="me-2 text-light fw-semibold">{{ user.first_name }}</span>
+
+                            {% if user.perfil.foto %}
+                                <img src="{{ user.perfil.foto.url }}" class="perfil-nav" alt="Perfil">
+                            {% elif user.perfil.avatar_default %}
+                                <img src="{% static 'images/' %}{{ user.perfil.avatar_default }}" class="perfil-nav" alt="Avatar">
+                            {% else %}
+                                <img src="{% static 'images/imagen01.png' %}" class="perfil-nav" alt="Por defecto">
+                            {% endif %}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if user.is_staff %}
+                                <li><a class="dropdown-item" href="/admin_panel/perfil/">👤 Mi perfil</a></li>
+                                <li><a class="dropdown-item" href="/admin_panel/">🏠 Dashboard Admin</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="/cliente/compras/">🧾 Mis pedidos</a></li>
+                                <li><a class="dropdown-item" href="/cliente/perfil/">👤 Mi perfil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item text-danger" href="/logout/">🚪 Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="/login/">Iniciar sesión</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/registro/">Registro</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MENSAJES -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ESPACIO -->
+    <div style="height: 90px;"></div>
+
+    <!-- CONTENIDO -->
+    <div class="container mt-3">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/navbar.js' %}"></script>
+
+    <style>
+        .perfil-nav {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            transition: transform 0.2s ease;
+        }
+        .perfil-nav:hover {
+            transform: scale(1.1);
+        }
+        .badge {
+            font-size: 0.7rem;
+        }
+        .dropdown-menu a.dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</body>
+</html>
