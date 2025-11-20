@@ -5,81 +5,95 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="min-h-screen bg-feastar-cream font-montserrat text-gray-800">
 
-    <!-- ===== CATEGORÍAS ESTILO UBER EATS ===== -->
-    <div class="categorias-scroll mb-5">
+    <header class="max-w-7xl mx-auto px-4 pt-12 pb-8 text-center relative">
+        
+        <h1 class="text-4xl md:text-6xl font-black text-feastar-dark leading-tight uppercase mb-6">
+            Discover Culinary <br>
+            Excellence <span class="font-playfair lowercase italic font-normal text-gray-600">with Feastar</span>
+        </h1>
 
-        {% for cat in categorias %}
-            <a href="{% url 'categoria_detalle' cat.id %}" class="categoria-item">
+        <div class="w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-sm">
+            <img src="https://images.unsplash.com/photo-1543353071-10c8ba85a941?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+                 class="w-full h-64 md:h-80 object-cover object-center" alt="Portada">
+        </div>
+    </header>
 
-                {% if cat.id == 1 %}
-                    <span class="emoji">🔥</span>
-                {% elif cat.id == 2 %}
-                    <span class="emoji">🍲</span>
-                {% elif cat.id == 3 %}
-                    <span class="emoji">🌮</span>
-                {% elif cat.id == 4 %}
-                    <span class="emoji">🍹</span>
-                {% elif cat.id == 5 %}
-                    <span class="emoji">🍮</span>
-                {% endif %}
+    <section class="bg-feastar-olive text-white py-12 px-4 my-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-2xl font-bold text-feastar-gold mb-8 uppercase tracking-wider">Our Core Values</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-utensils text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Excellence</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-fire-burner text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Innovation</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-star text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Quality</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-leaf text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Sustainability</h3>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <span class="texto">{{ cat.nombre }}</span>
+    <div class="max-w-7xl mx-auto px-4 py-8">
 
-            </a>
+        <div class="flex justify-between items-end mb-10">
+            <h2 class="text-3xl md:text-4xl font-black text-feastar-dark uppercase">Our Offerings</h2>
+        </div>
+
+        {% for item in data_categorias %}
+            <div class="mb-16">
+                
+                <h3 class="text-xl font-bold text-feastar-orange mb-6 uppercase border-b-2 border-feastar-orange inline-block pb-1">
+                    {{ item.categoria.nombre }}
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    
+                    {% for prod in item.productos %}
+                        <div class="group cursor-pointer flex flex-col h-full shadow-sm hover:shadow-lg transition-all duration-300 bg-white rounded-sm overflow-hidden relative">
+                            
+                            <div class="bg-feastar-orange text-white text-center py-2 px-3">
+                                <h5 class="font-bold uppercase text-xs tracking-wider truncate">
+                                    {{ prod.nombre }}
+                                </h5>
+                            </div>
+
+                            <div class="relative overflow-hidden h-36 w-full">
+                                {% if prod.imagen %}
+                                    <img src="{{ prod.imagen.url }}" 
+                                         class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500"
+                                         alt="{{ prod.nombre }}">
+                                {% else %}
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                        <i class="fa-solid fa-utensils text-gray-400 text-2xl"></i>
+                                    </div>
+                                {% endif %}
+
+                                <div class="absolute bottom-0 right-0 bg-black/80 text-feastar-gold px-3 py-1 text-xs font-bold">
+                                    ${{ prod.precio }}
+                                </div>
+                            </div>
+                            
+                            <a href="{% url 'producto_detalle' prod.id %}" class="absolute inset-0 z-10"></a>
+                        </div>
+                    {% endfor %}
+
+                </div> 
+            </div>
         {% endfor %}
 
     </div>
-
-    <!-- ===== SECCIONES DE CATEGORÍAS (3 productos + Ver más) ===== -->
-    {% for item in data_categorias %}
-        <div class="mb-5">
-
-            <!-- TÍTULO + BOTÓN -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                <h4>
-                    {% if item.categoria.id == 1 %}
-                        🔥
-                    {% elif item.categoria.id == 2 %}
-                        🍲
-                    {% elif item.categoria.id == 3 %}
-                        🌮
-                    {% elif item.categoria.id == 4 %}
-                        🍹
-                    {% elif item.categoria.id == 5 %}
-                        🍮
-                    {% endif %}
-                    {{ item.categoria.nombre }}
-                </h4>
-
-                <a href="{% url 'categoria_detalle' item.categoria.id %}" class="btn btn-link">
-                    Ver más →
-                </a>
-            </div>
-
-            <!-- LISTA DE PRODUCTOS -->
-            <div class="row">
-                {% for prod in item.productos %}
-                    <div class="col-md-4">
-                        <div class="card mb-3 shadow-sm producto-card">
-                            <img src="{{ prod.imagen.url }}" class="card-img-top producto-img">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ prod.nombre }}</h5>
-                                <p class="m-0 precio">${{ prod.precio }}</p>
-                                <a href="{% url 'producto_detalle' prod.id %}" class="btn btn-sm btn-primary mt-2">
-                                    Ver detalles
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-
-        </div>
-    {% endfor %}
-
 </div>
 
 {% endblock %}

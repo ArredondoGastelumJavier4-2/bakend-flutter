@@ -1,21 +1,76 @@
 {% extends 'menu/base.html' %}
+{% load static %}
 {% block title %}Pago con tarjeta{% endblock %}
+
 {% block content %}
-<h2 class="text-2xl font-semibold mb-4">Pago con tarjeta</h2>
-<form method="POST" class="bg-white shadow p-6 rounded w-full max-w-lg">
-{% csrf_token %}
-<label class="block mb-2">Número de tarjeta</label>
-<input class="w-full border rounded p-2 mb-4" type="text" name="numero" required>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="bg-white shadow-lg p-5 rounded text-center" style="max-width: 550px; width: 100%;">
+        <h3 class="fw-bold mb-4">Pago con tarjeta</h3>
 
+        <!-- Imagen grande centrada -->
+        <div class="d-flex justify-content-center mb-5">
+            <img src="{% static 'images/tarjeta.png' %}" alt="Tarjeta"
+                 class="img-fluid" 
+                 style="width: 400px; max-width: 100%; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+        </div>
 
-<label class="block mb-2">Fecha de expiración</label>
-<input class="w-full border rounded p-2 mb-4" type="text" name="exp" placeholder="MM/AA" required>
+        <form method="POST" id="form-pago">
+            {% csrf_token %}
+            <div class="text-start">
+                <label class="form-label">Número de tarjeta</label>
+                <input class="form-control mb-3" type="text" name="numero" id="numero" required>
 
+                <label class="form-label">Fecha de expiración</label>
+                <input class="form-control mb-3" type="text" name="exp" id="exp" placeholder="MM/AA" required>
 
-<label class="block mb-2">CVV</label>
-<input class="w-full border rounded p-2 mb-4" type="password" name="cvv" required>
+                <label class="form-label">CVV</label>
+                <input class="form-control mb-4" type="password" name="cvv" id="cvv" required>
 
+                <!-- Checkbox de pago en sucursal -->
+                <div class="form-check text-start mb-4">
+                    <input class="form-check-input" type="checkbox" id="pagoSucursal">
+                    <label class="form-check-label fw-semibold" for="pagoSucursal">
+                        Pagar en sucursal 🏪
+                    </label>
+                </div>
+            </div>
 
-<button class="bg-green-600 text-white px-4 py-2 rounded">Confirmar pago</button>
-</form>
+            <button type="submit" id="btnConfirmar" class="btn btn-success w-100 py-3 fw-semibold fs-5 shadow-sm">
+                Confirmar pedido
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Desactivar campos si se selecciona "Pagar en sucursal"
+    const pagoSucursal = document.getElementById('pagoSucursal');
+    const campos = ['numero', 'exp', 'cvv'];
+
+    pagoSucursal.addEventListener('change', () => {
+        const disabled = pagoSucursal.checked;
+        campos.forEach(id => {
+            const campo = document.getElementById(id);
+            campo.disabled = disabled;
+            campo.style.backgroundColor = disabled ? '#e9ecef' : '';
+        });
+    });
+
+    // ✅ Confirmar pedido real en backend (vacía el carrito)
+    const form = document.getElementById('form-pago');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('✅ Pedido realizado con éxito. ¡Gracias por tu compra!');
+        window.location.href = "{% url 'confirmar_pedido' %}";
+    });
+</script>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+    }
+</style>
 {% endblock %}

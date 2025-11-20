@@ -4,103 +4,143 @@
 {% block title %}Registro{% endblock %}
 
 {% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-10">
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
 
-        <h3 class="text-center mb-4">Crear cuenta</h3>
+        <!-- Título -->
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
+            Crear cuenta
+        </h2>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
             {% csrf_token %}
 
-            <!-- ERRORES GENERALES -->
+            <!-- Errores generales -->
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for error in form.non_field_errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-            <!-- NOMBRE -->
-            <div class="mb-3">
-                <label>Nombre</label>
-                <input type="text" name="first_name" class="form-control"
-                       value="{{ form.first_name.value|default:'' }}">
-                {% if form.first_name.errors %}
-                    <small class="text-danger">{{ form.first_name.errors.0 }}</small>
-                {% endif %}
-            </div>
-
-            <!-- APELLIDO -->
-            <div class="mb-3">
-                <label>Apellido</label>
-                <input type="text" name="last_name" class="form-control"
-                       value="{{ form.last_name.value|default:'' }}">
-                {% if form.last_name.errors %}
-                    <small class="text-danger">{{ form.last_name.errors.0 }}</small>
-                {% endif %}
-            </div>
-
-            <!-- EMAIL -->
-            <div class="mb-3">
-                <label>Correo electrónico</label>
-                <input type="email" name="email" class="form-control"
-                       value="{{ form.email.value|default:'' }}">
-                {% if form.email.errors %}
-                    <small class="text-danger">{{ form.email.errors.0 }}</small>
-                {% endif %}
-            </div>
-
-            <!-- CONTRASEÑA -->
-            <div class="mb-3">
-                <label>Contraseña</label>
-                <input type="password" name="password" class="form-control">
-                {% if form.password.errors %}
-                    <small class="text-danger">{{ form.password.errors.0 }}</small>
-                {% endif %}
-            </div>
-
-            <!-- CONFIRMAR CONTRASEÑA -->
-            <div class="mb-3">
-                <label>Confirmar contraseña</label>
-                <input type="password" name="password2" class="form-control">
-                {% if form.password2.errors %}
-                    <small class="text-danger">{{ form.password2.errors.0 }}</small>
-                {% endif %}
-            </div>
-
-            <!-- SUBIR FOTO -->
-            <div class="mb-3">
-                <label>Subir tu foto (opcional)</label>
-                <input type="file" name="foto" class="form-control" accept="image/*">
-            </div>
-
-            <!-- AVATARES -->
-            <h5 class="mt-4">Selecciona una imagen de perfil</h5>
-
-            <div class="avatar-container">
-                {% for i in "12345" %}
-                    <label class="avatar-option">
-                        <input type="radio" name="avatar_default" value="{{ i }}"
-                               {% if form.avatar_default.value == i %}checked{% endif %}>
-                        <img src="{% static 'images/imagen0' %}{{ i }}.png"
-                             class="avatar-img" alt="Avatar {{ i }}">
-                    </label>
+            <div class="bg-red-100 text-red-700 p-3 rounded-md">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
                 {% endfor %}
             </div>
+            {% endif %}
 
-            <div class="d-grid mt-4">
-                <button class="btn btn-success">Registrar</button>
+            <!-- Nombre -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <input type="text" name="first_name" placeholder="Nombre"
+                       value="{{ form.first_name.value|default:'' }}"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.first_name.errors %}
+                    <small class="text-red-600">{{ form.first_name.errors.0 }}</small>
+                {% endif %}
             </div>
+
+            <!-- Apellido -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-user"></i>
+                </span>
+                <input type="text" name="last_name" placeholder="Apellido"
+                       value="{{ form.last_name.value|default:'' }}"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.last_name.errors %}
+                    <small class="text-red-600">{{ form.last_name.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-envelope"></i>
+                </span>
+                <input type="email" name="email" placeholder="Correo electrónico"
+                       value="{{ form.email.value|default:'' }}"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.email.errors %}
+                    <small class="text-red-600">{{ form.email.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Username -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-id-badge"></i>
+                </span>
+                <input type="text" name="username" placeholder="Usuario"
+                       value="{{ form.username.value|default:'' }}"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.username.errors %}
+                    <small class="text-red-600">{{ form.username.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Contraseña -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" name="password" placeholder="Contraseña"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.password.errors %}
+                    <small class="text-red-600">{{ form.password.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <i class="fa-solid fa-lock"></i>
+                </span>
+                <input type="password" name="password2" placeholder="Confirmar contraseña"
+                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+                {% if form.password2.errors %}
+                    <small class="text-red-600">{{ form.password2.errors.0 }}</small>
+                {% endif %}
+            </div>
+
+            <!-- Subir foto -->
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">
+                    <i class="fa-solid fa-image mr-1"></i> Subir tu foto (opcional)
+                </label>
+                <input type="file" name="foto" accept="image/*"
+                       class="w-full border border-gray-300 rounded-xl py-2 px-3 focus:ring-2 focus:ring-lime-600 focus:border-lime-600 outline-none">
+            </div>
+
+            <!-- Avatares predeterminados -->
+            <div>
+                <h5 class="text-gray-700 font-medium mb-2">Selecciona una imagen de perfil</h5>
+                <div class="flex gap-3 flex-wrap">
+                    {% for i in "12345" %}
+                        <label class="cursor-pointer">
+                            <input type="radio" name="avatar_default" value="{{ i }}"
+                                   class="hidden" {% if form.avatar_default.value == i %}checked{% endif %}>
+                            <img src="{% static 'images/imagen0' %}{{ i }}.png"
+                                 class="w-16 h-16 rounded-full border-2 border-gray-300 hover:border-lime-500 transition"
+                                 alt="Avatar {{ i }}">
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Botón registrar -->
+            <button type="submit"
+                    class="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white font-semibold py-3 rounded-xl transition mt-4">
+                <i class="fa-solid fa-user-plus"></i>
+                Registrar
+            </button>
 
         </form>
 
-        <p class="mt-3 text-center">
-            ¿Ya tienes una cuenta? <a href="/login/">Inicia sesión</a>
+        <p class="mt-6 text-center text-gray-600">
+            ¿Ya tienes una cuenta?
+            <a href="/login/" class="text-orange-600 hover:underline font-semibold">Inicia sesión</a>
         </p>
 
     </div>
-</div>
 
+</div>
 {% endblock %}
