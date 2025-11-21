@@ -2,40 +2,120 @@
 {% block title %}Detalle del Pedido{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Pedido #{{ pedido.id }}</h2>
 
-<p><strong>Cliente:</strong> {{ pedido.cliente.username }}</p>
-<p><strong>Estado:</strong> {{ pedido.estatus }}</p>
-<p><strong>Total:</strong> ${{ pedido.total }}</p>
-<p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans flex justify-center">
 
-<h3 class="mt-4">Productos:</h3>
-<table class="table bg-white shadow">
-    <tr>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Subtotal</th>
-        <th>Notas</th>
-    </tr>
-    {% for item in pedido.detalles.all %}
-    <tr>
-        <td>{{ item.producto.nombre }}</td>
-        <td>{{ item.cantidad }}</td>
-        <td>${{ item.subtotal }}</td>
-        <td>{{ item.notas }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="w-full max-w-5xl mt-6">
 
-<form method="POST" class="mt-3">
-    {% csrf_token %}
-    <label class="form-label">Cambiar estado:</label>
-    <select name="estatus" class="form-control mb-3">
-        <option value="activo">Activo</option>
-        <option value="listo">Listo</option>
-        <option value="entregado">Entregado</option>
-    </select>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 pb-4 border-b border-gray-300">
+            <i class="fas fa-receipt text-purple-600 mr-2"></i> Pedido #{{ pedido.id }}
+        </h2>
 
-    <button class="btn btn-success">Actualizar estado</button>
-</form>
+
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border-t-4 border-purple-500 mb-8">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+                <!-- Cliente -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium uppercase text-gray-600">Cliente</p>
+                    <p class="text-xl font-semibold text-gray-900 flex items-center mt-1">
+                        <i class="fas fa-user-circle text-purple-600 mr-2"></i> {{ pedido.cliente.username }}
+                    </p>
+                </div>
+
+                <!-- Fecha -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium uppercase text-gray-600">Fecha</p>
+                    <p class="text-xl font-semibold text-gray-900 flex items-center mt-1">
+                        <i class="fas fa-calendar-alt text-purple-600 mr-2"></i> {{ pedido.fecha }}
+                    </p>
+                </div>
+
+                <!-- Total -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium uppercase text-gray-600">Total</p>
+                    <p class="text-2xl font-extrabold text-purple-900 flex items-center mt-1">
+                        <i class="fas fa-dollar-sign text-purple-600 mr-2"></i> {{ pedido.total }}
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-truck text-purple-600 mr-2"></i> Gestión de Estado
+                </h3>
+
+                <form method="POST" class="flex flex-col sm:flex-row items-end space-y-4 sm:space-y-0 sm:space-x-4">
+                    {% csrf_token %}
+
+                    <div class="flex-grow w-full">
+                        <label for="id_estatus" class="block text-sm font-medium text-gray-700 mb-1">Cambiar
+                            estado:</label>
+                        <div class="relative">
+                            <select id="id_estatus" name="estatus"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150 appearance-none">
+                                <option value="activo" {% if pedido.estatus is "activo" %}selected{% endif %}>Activo
+                                </option>
+                                <option value="listo" {% if pedido.estatus is "listo" %}selected{% endif %}>Listo</option>
+                                <option value="entregado" {% if pedido.estatus is "entregado" %}selected{% endif %}>
+                                    Entregado</option>
+
+                            </select>
+                            <i
+                                class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="
+                        inline-flex items-center justify-center px-6 py-2 border border-transparent text-base font-semibold rounded-lg shadow-md 
+                        text-white bg-purple-600 hover:bg-purple-700 shadow-purple-500/50 
+                        hover:shadow-xl hover:shadow-purple-600/60 focus:outline-none focus:ring-4 focus:ring-purple-500/50 transition duration-300 w-full sm:w-auto
+                    ">
+                        <i class="fas fa-sync-alt mr-2"></i> Actualizar estado
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- Sección de Productos -->
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border-t-4 border-gray-400">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-boxes text-gray-600 mr-2"></i> Productos del Pedido
+            </h3>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider rounded-tl-lg">
+                                Producto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for item in pedido.detalles.all %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 flex items-center">
+                                <i class="fas fa-box text-gray-400 mr-2"></i> {{ item.producto.nombre }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.cantidad }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No hay detalles de
+                                productos para este pedido.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

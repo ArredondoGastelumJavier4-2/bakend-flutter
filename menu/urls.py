@@ -66,4 +66,6 @@ urlpatterns = [
     path("cliente/perfil/", views.perfil_cliente, name="cliente_perfil"),
     path('admin_panel/perfil/', views_admin.perfil_admin, name="perfil_admin"),
 
+    path('admin_panel/mesas/', views_admin.mesa_lista, name="mesa_lista"),
+
 ]

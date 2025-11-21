@@ -36,7 +36,8 @@
     </script>
 </head>
 
-<body class="bg-feastar-cream font-montserrat text-feastar-dark flex flex-col min-h-screen items-center  ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ">
+<body
+    class="bg-feastar-cream font-montserrat text-feastar-dark flex flex-col min-h-screen items-center  ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ">
 
     <!-- =============================
         NAVBAR PRINCIPAL
@@ -66,6 +67,7 @@
                 </form>
                 {% endif %}
 
+                {% if user.is_authenticated and not user.is_staff %}
                 <div class="flex items-center gap-6">
                     <a href="/categoria/1" class="hover:text-gray-200 text-sm font-medium">Entradas</a>
                     <a href="/categoria/2" class="hover:text-gray-200 text-sm font-medium">Platillos de Fogón</a>
@@ -73,66 +75,71 @@
                     <a href="/categoria/4" class="hover:text-gray-200 text-sm font-medium">Bebidas</a>
                     <a href="/categoria/5" class="hover:text-gray-200 text-sm font-medium">Postres</a>
                 </div>
+                {% endif %}
 
                 <!-- LINKS ADMIN -->
                 {% if user.is_authenticated and user.is_staff %}
-                <a href="/admin_panel/reportes/ventas/"
+                <a href="{% url 'mesa_lista' %}"
                     class="hover:text-gray-200 text-sm font-medium flex gap-1 items-center">
-                    <i class="fa-solid fa-arrow-trend-up"></i> Reportes
-                </a>
-                <a href="/admin_panel/" class="hover:text-gray-200 text-sm font-medium flex gap-1 items-center">
-                    <i class="fa-solid fa-gauge"></i> Dashboard
-                </a>
-                {% endif %}
-
-                <!-- CARRITO -->
-                {% if user.is_authenticated and not user.is_staff %}
-                <a href="{% url 'carrito' %}" class="relative text-xl hover:text-gray-200">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    {% if carrito_items_count > 0 %}
-                    <span class="absolute -top-1 -right-3 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
-                        {{ carrito_items_count }}
-                    </span>
+                    <i class="fa-solid fa-utensils"></i> Mesas
+                    <a href="/admin_panel/reportes/ventas/"
+                        class="hover:text-gray-200 text-sm font-medium flex gap-1 items-center">
+                        <i class="fa-solid fa-arrow-trend-up"></i> Reportes
+                    </a>
+                    <a href="/admin_panel/" class="hover:text-gray-200 text-sm font-medium flex gap-1 items-center">
+                        <i class="fa-solid fa-gauge"></i> Dashboard
+                    </a>
                     {% endif %}
-                </a>
-                {% endif %}
 
-                <!-- PERFIL DESKTOP -->
-                {% if user.is_authenticated %}
-                <div class="relative" @mouseenter="profile = true" @mouseleave="profile = false">
-                    <button data-profile-btn class="flex items-center gap-2 text-sm font-medium">
-                        {{ user.first_name }}
-
-                        {% if user.perfil.foto %}
-                        <img src="{{ user.perfil.foto.url }}" class="w-9 h-9 rounded-full object-cover">
-                        {% elif user.perfil.avatar_default %}
-                        <img src="{% static 'images/' %}{{ user.perfil.avatar_default }}"
-                            class="w-9 h-9 rounded-full object-cover">
-                        {% else %}
-                        <img src="{% static 'images/imagen01.png' %}" class="w-9 h-9 rounded-full object-cover">
+                    <!-- CARRITO -->
+                    {% if user.is_authenticated and not user.is_staff %}
+                    <a href="{% url 'carrito' %}" class="relative text-xl hover:text-gray-200">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        {% if carrito_items_count > 0 %}
+                        <span class="absolute -top-1 -right-3 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+                            {{ carrito_items_count }}
+                        </span>
                         {% endif %}
-                    </button>
+                    </a>
+                    {% endif %}
 
-                    <!-- DROPDOWN DESKTOP -->
-                    <div data-profile-dropdown class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2">
+                    <!-- PERFIL DESKTOP -->
+                    {% if user.is_authenticated %}
+                    <div class="relative" @mouseenter="profile = true" @mouseleave="profile = false">
+                        <button data-profile-btn class="flex items-center gap-2 text-sm font-medium">
+                            {{ user.first_name }}
 
-                        {% if user.is_staff %}
-                        <a href="/admin_panel/perfil/" class="block px-4 py-2 hover:bg-gray-100">👤 Mi perfil</a>
-                        <a href="/admin_panel/" class="block px-4 py-2 hover:bg-gray-100">🏠 Dashboard</a>
-                        {% else %}
-                        <a href="/cliente/compras/" class="block px-4 py-2 hover:bg-gray-100">🧾 Mis pedidos</a>
-                        <a href="/cliente/perfil/" class="block px-4 py-2 hover:bg-gray-100">👤 Mi perfil</a>
-                        {% endif %}
+                            {% if user.perfil.foto %}
+                            <img src="{{ user.perfil.foto.url }}" class="w-9 h-9 rounded-full object-cover">
+                            {% elif user.perfil.avatar_default %}
+                            <img src="{% static 'images/' %}{{ user.perfil.avatar_default }}"
+                                class="w-9 h-9 rounded-full object-cover">
+                            {% else %}
+                            <img src="{% static 'images/imagen01.png' %}" class="w-9 h-9 rounded-full object-cover">
+                            {% endif %}
+                        </button>
 
-                        <hr>
-                        <a href="/logout/" class="block px-4 py-2 text-red-600 hover:bg-red-50">🚪 Cerrar sesión</a>
+                        <!-- DROPDOWN DESKTOP -->
+                        <div data-profile-dropdown
+                            class="hidden absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2">
+
+                            {% if user.is_staff %}
+                            <a href="/admin_panel/perfil/" class="block px-4 py-2 hover:bg-gray-100">👤 Mi perfil</a>
+                            <a href="/admin_panel/" class="block px-4 py-2 hover:bg-gray-100">🏠 Dashboard</a>
+                            {% else %}
+                            <a href="/cliente/compras/" class="block px-4 py-2 hover:bg-gray-100">🧾 Mis pedidos</a>
+                            <a href="/cliente/perfil/" class="block px-4 py-2 hover:bg-gray-100">👤 Mi perfil</a>
+                            {% endif %}
+
+                            <hr>
+                            <a href="/logout/" class="block px-4 py-2 text-red-600 hover:bg-red-50">🚪 Cerrar sesión</a>
+                        </div>
                     </div>
-                </div>
 
-                {% else %}
-                <a href="/login/" class="hover:text-gray-200 text-sm">Iniciar sesión</a>
-                <a href="/registro/" class="hover:text-gray-200 text-sm">Registro</a>
-                {% endif %}
+                    {% else %}
+                    <a href="/login/" class="hover:text-gray-200 text-sm">Iniciar sesión</a>
+                    <a href="/registro/" class="hover:text-gray-200 text-sm">Registro</a>
+                    {% endif %}
             </div>
 
             <!-- BOTÓN MOBILE -->

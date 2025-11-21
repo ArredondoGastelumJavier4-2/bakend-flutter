@@ -2,29 +2,105 @@
 {% block title %}Clientes{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Clientes Registrados</h2>
 
-<table class="table table-hover shadow bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>Usuario</th>
-            <th>Correo</th>
-            <th>Pedidos</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans">
 
-    <tbody>
+    <!-- Encabezado y Buscador: Muestra el Buscador al lado derecho del título en escritorio. En móvil, se ajusta para mejor usabilidad. -->
+    <div class="
+        flex flex-col lg:flex-row lg:justify-between lg:items-center 
+        mb-8 border-b border-gray-300 pb-3 
+        space-y-4 lg:space-y-0
+    ">
+        <!-- Título -->
+        <h2 class="text-3xl font-extrabold text-gray-900">
+            <i class="fas fa-user-friends text-blue-600 mr-3"></i>Clientes Registrados
+        </h2>
+
+        <!-- Buscador (Movido y estilizado para ocupar el espacio a la derecha en LG) -->
+        <div
+            class="w-full lg:w-96 p-0 bg-white rounded-xl shadow-lg border border-gray-100 lg:shadow-none lg:border-none">
+            <form action="#" method="GET" class="flex items-center">
+
+                <!-- Campo de Texto de Búsqueda -->
+                <div class="relative flex-grow">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="search" name="q" placeholder="Buscar cliente..."
+                        class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-l-lg lg:rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 shadow-inner">
+                </div>
+
+                <!-- Botón de Búsqueda (Visible solo en móvil/tablet si se desea, o como aquí, siempre visible) -->
+                <button type="submit" class="
+                        flex-shrink-0 inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-r-lg lg:rounded-lg shadow-md 
+                        bg-blue-600 hover:bg-blue-700 shadow-blue-500/50 
+                        hover:shadow-lg hover:shadow-blue-600/60 transition duration-300 h-full
+                    ">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
         {% for cliente in clientes %}
-        <tr>
-            <td>{{ cliente.username }}</td>
-            <td>{{ cliente.email }}</td>
-            <td>{{ cliente.pedidos.count }}</td>
-            <td>
-                <a href="{% url 'cliente_eliminar' cliente.id %}" class="text-danger">Eliminar</a>
-            </td>
-        </tr>
+
+        <div class="
+            bg-white p-6 rounded-xl shadow-xl transition-all duration-300 ease-in-out border-t-4 border-blue-500 
+            hover:shadow-2xl hover:scale-[1.02]
+        ">
+            <div class="flex items-center space-x-4 mb-4">
+
+                <div class="text-4xl text-blue-600 bg-blue-50 p-3 rounded-full">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div>
+
+                    <h3 class="text-xl font-bold text-gray-900">{{ cliente.username }}</h3>
+
+                    <p class="text-sm text-gray-500 flex items-center mt-1">
+                        <i class="fas fa-envelope mr-2"></i>{{ cliente.email }}
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="border-t border-gray-100 pt-4 mt-4">
+                <p class="text-sm font-semibold uppercase text-gray-500 mb-2">Estadísticas</p>
+
+
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                    <span class="text-gray-700 font-medium flex items-center">
+                        <i class="fas fa-receipt text-amber-500 mr-2"></i> Pedidos Realizados
+                    </span>
+
+                    <span class="text-2xl font-extrabold text-amber-600">
+                        {{ cliente.pedidos.count }}
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="mt-6 flex justify-end">
+                <a href="{% url 'cliente_eliminar' cliente.id %}" class="
+                    inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md 
+                    text-white bg-red-600 hover:bg-red-700 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150
+                ">
+                    <i class="fas fa-trash-alt mr-2"></i> Eliminar
+                </a>
+            </div>
+        </div>
+        {% empty %}
+
+        <div class="col-span-full bg-white p-6 rounded-xl shadow-lg">
+            <p class="text-center text-gray-500 text-lg italic">
+                No hay clientes registrados en este momento.
+            </p>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
+
+    </div>
+</div>
 {% endblock %}

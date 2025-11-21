@@ -7,9 +7,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import FormLogin, FormRegistro
-from .models import Producto, Categoria, Pedido, PedidoDetalle
-
-
+from .models import Producto, Categoria, Pedido, PedidoDetalle, Mesa
+from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Pedido, Mesa
+from django.db import transaction
 # ======================================
 # REGISTRO DE CLIENTES
 # ======================================
@@ -223,52 +227,82 @@ def eliminar_carrito(request, item_id):
 # ======================================
 # PAGO TARJETA
 # ======================================
+from .models import Mesa
+
 @login_required
 def pago_tarjeta(request):
-    return render(request, "menu/cliente/pago_tarjeta.html")
+    mesas = Mesa.objects.all().order_by('numero')
+    return render(request, "menu/cliente/pago_tarjeta.html", {'mesas': mesas})
+
 
 
 # ======================================
 # CONFIRMAR PEDIDO
 # ======================================
 @login_required
+@transaction.atomic
 def confirmar_pedido(request):
-    cart = request.session.get("cart", {})
+    if request.method == "POST":
+        # --- Mesa seleccionada ---
+        mesa_id = request.POST.get("mesa_id")
+        mesa = None
+        if mesa_id:
+            try:
+                mesa = Mesa.objects.get(numero=mesa_id)
+                mesa.ocupada = True
+                mesa.save()
+            except Mesa.DoesNotExist:
+                messages.error(request, "Mesa seleccionada no válida.")
+                return redirect("pago_tarjeta")
 
-    if not cart:
-        messages.error(request, "Tu carrito está vacío.")
-        return redirect("carrito")
+        # --- Obtener carrito (ajustado a tu estructura) ---
+        cart = request.session.get("cart", {})
+        if not cart:
+            messages.error(request, "Tu carrito está vacío.")
+            return redirect("cliente_dashboard")
 
-    pedido = Pedido.objects.create(
-        cliente=request.user,
-        total=0,
-        estatus="activo"
-    )
+        total = 0
+        for product_id, data in cart.items():
+            producto = Producto.objects.get(id=product_id)
+            total += producto.precio * data["cantidad"]
 
-    total_final = 0
-
-    for product_id, data in cart.items():
-        producto = Producto.objects.get(id=product_id)
-        subtotal = producto.precio * data["cantidad"]
-        total_final += subtotal
-
-        PedidoDetalle.objects.create(
-            pedido=pedido,
-            producto=producto,
-            cantidad=data["cantidad"],
-            precio_unitario=producto.precio
+        # --- Crear pedido ---
+        pedido = Pedido.objects.create(
+            cliente=request.user,
+            total=total,
+            estatus="activo",
+            metodo_pago="tarjeta" if not request.POST.get("pagar_sucursal") else "sucursal",
         )
 
-    pedido.total = total_final
-    pedido.save()
+        # --- Crear detalles ---
+        for product_id, data in cart.items():
+            producto = Producto.objects.get(id=product_id)
+            PedidoDetalle.objects.create(
+                pedido=pedido,
+                producto=producto,
+                cantidad=data["cantidad"],
+                precio_unitario=producto.precio,
+            )
 
-    # ✅ Vaciar carrito al confirmar pedido
-    request.session["cart"] = {}
+        # --- Limpiar carrito ---
+        request.session["cart"] = {}
+        request.session.modified = True
 
-    messages.success(request, "Pedido realizado con éxito.")
+        # --- Calcular tiempo estimado ---
+        pedidos_activos = Pedido.objects.filter(estatus="activo").count()
+        tiempo_estimado = 20 + (pedidos_activos * 10)
+
+        # --- Mensaje de éxito ---
+        messages.success(
+            request,
+            f"✅ Tu pedido se ha creado con éxito. Tiempo estimado: {tiempo_estimado} minutos."
+        )
+
+        # --- Redirigir al HOME (donde sí se muestran los mensajes) ---
+        return redirect("cliente_dashboard")
+
+
     return redirect("cliente_dashboard")
-
-
 
 # ======================================
 # PERFIL DEL CLIENTE
@@ -351,4 +385,5 @@ def pedido_detalle(request, pedido_id):
         "pedido": pedido,
         "detalles": detalles
     })
+
 

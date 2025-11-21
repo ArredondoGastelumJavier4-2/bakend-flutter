@@ -1,0 +1,77 @@
+{% extends 'menu/base.html' %}
+{% load static %}
+{% block title %}Administrar Mesas{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center mt-8">
+
+    <h2 class="text-3xl font-bold mb-6 text-feastar-dark flex items-center gap-2">
+        <i class="fa-solid fa-chair"></i> Administración de Mesas
+    </h2>
+
+    <div id="gridMesas" class="grid grid-cols-3 gap-8">
+        {% for mesa in mesas %}
+        <button 
+            data-id="{{ mesa.id }}"
+            data-ocupada="{{ mesa.ocupada|yesno:'true,false' }}"
+            class="mesa w-24 h-24 rounded-xl flex flex-col items-center justify-center font-bold text-lg shadow-md transition-all duration-300
+            {% if mesa.ocupada %}
+                bg-yellow-400 text-feastar-dark
+            {% else %}
+                bg-green-500 text-white
+            {% endif %}">
+            <span>Mesa</span>
+            <span class="text-2xl">{{ mesa.numero }}</span>
+        </button>
+        {% endfor %}
+    </div>
+
+    <p class="mt-6 text-sm text-gray-500 italic">
+        🟩 Verde = Libre &nbsp;&nbsp; 🟨 Amarillo = Ocupada
+    </p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const mesas = document.querySelectorAll('.mesa');
+
+    mesas.forEach(mesa => {
+        mesa.addEventListener('click', async () => {
+            const mesaId = mesa.dataset.id;
+            const formData = new FormData();
+            formData.append('mesa_id', mesaId);
+
+            try {
+                const response = await fetch("", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.ocupada) {
+                        mesa.classList.remove('bg-green-500', 'text-white');
+                        mesa.classList.add('bg-yellow-400', 'text-feastar-dark');
+                    } else {
+                        mesa.classList.remove('bg-yellow-400', 'text-feastar-dark');
+                        mesa.classList.add('bg-green-500', 'text-white');
+                    }
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo cambiar el estado.'));
+                }
+
+            } catch (err) {
+                console.error("Error al cambiar mesa:", err);
+                alert("Ocurrió un error en el servidor.");
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

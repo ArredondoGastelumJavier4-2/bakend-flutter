@@ -1,76 +1,212 @@
-{% extends 'menu/base.html' %}
+{% extends "menu/base.html" %}
 {% load static %}
-{% block title %}Pago con tarjeta{% endblock %}
+{% block title %}Realizar Pago{% endblock %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
-    <div class="bg-white shadow-lg p-5 rounded text-center" style="max-width: 550px; width: 100%;">
-        <h3 class="fw-bold mb-4">Pago con tarjeta</h3>
 
-        <!-- Imagen grande centrada -->
-        <div class="d-flex justify-content-center mb-5">
-            <img src="{% static 'images/tarjeta.png' %}" alt="Tarjeta"
-                 class="img-fluid" 
-                 style="width: 400px; max-width: 100%; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-        </div>
+<div class="w-full min-h-[calc(100vh-6rem)] bg-feastar-cream font-montserrat text-feastar-dark flex items-center justify-center py-10 px-4">
 
-        <form method="POST" id="form-pago">
-            {% csrf_token %}
-            <div class="text-start">
-                <label class="form-label">Número de tarjeta</label>
-                <input class="form-control mb-3" type="text" name="numero" id="numero" required>
+    <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
 
-                <label class="form-label">Fecha de expiración</label>
-                <input class="form-control mb-3" type="text" name="exp" id="exp" placeholder="MM/AA" required>
+        <!-- PANEL IZQUIERDO -->
+        <div id="panelIzquierdo" class="w-full md:w-1/2 bg-feastar-dark text-white p-8 flex flex-col justify-center gap-8 relative overflow-hidden">
+            
+            <div class="absolute -top-10 -left-10 w-40 h-40 bg-feastar-orange/20 rounded-full blur-2xl"></div>
+            <div class="absolute bottom-10 right-10 w-32 h-32 bg-feastar-gold/20 rounded-full blur-xl"></div>
 
-                <label class="form-label">CVV</label>
-                <input class="form-control mb-4" type="password" name="cvv" id="cvv" required>
+            <!-- PANEL TARJETA -->
+            <div id="tarjetaPanel" class="relative z-10 text-center md:text-left">
+                <h2 class="text-2xl font-bold uppercase tracking-widest text-feastar-gold">Tu Pedido</h2>
+                <p class="text-gray-400 text-sm mt-1">Resumen de pago</p>
 
-                <!-- Checkbox de pago en sucursal -->
-                <div class="form-check text-start mb-4">
-                    <input class="form-check-input" type="checkbox" id="pagoSucursal">
-                    <label class="form-check-label fw-semibold" for="pagoSucursal">
-                        Pagar en sucursal 🏪
-                    </label>
+                <div class="mt-6 w-full max-w-[320px] mx-auto aspect-[1.58/1] bg-gradient-to-br from-feastar-orange to-red-600 rounded-xl shadow-lg p-6 text-white transform transition hover:scale-105 duration-500">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="w-12 h-8 bg-yellow-400/30 rounded-md border border-yellow-200/50 flex items-center justify-center">
+                            <div class="w-8 h-5 border border-yellow-200/30 rounded-sm"></div>
+                        </div>
+                        <i class="fa-brands fa-cc-visa text-4xl opacity-80"></i>
+                    </div>
+
+                    <div class="text-xl font-mono tracking-widest mb-4 text-shadow">
+                        **** **** **** 4242
+                    </div>
+
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-[10px] text-orange-100 uppercase tracking-wider mb-1">Titular</p>
+                            <p class="font-bold tracking-wide text-xs uppercase truncate max-w-[120px]">{{ user.first_name|default:"CLIENTE" }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-orange-100 uppercase tracking-wider mb-1">Expira</p>
+                            <p class="font-bold tracking-wide text-xs">12/28</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" id="btnConfirmar" class="btn btn-success w-100 py-3 fw-semibold fs-5 shadow-sm">
-                Confirmar pedido
-            </button>
-        </form>
+            <!-- PANEL MESA -->
+            <div id="mesaPanel" class="hidden relative z-10 text-center">
+                <h2 class="text-2xl font-bold uppercase tracking-widest text-feastar-gold mb-4">Seleccione Mesa</h2>
+                <div class="grid grid-cols-3 gap-4 place-items-center">
+                    {% for mesa in mesas %}
+                        <button 
+                            type="button"
+                            data-numero="{{ mesa.numero }}"
+                            class="mesa-btn w-16 h-16 flex items-center justify-center font-bold rounded-lg transition-all duration-200
+                            {% if mesa.ocupada %}
+                                bg-yellow-400 text-feastar-dark cursor-not-allowed opacity-70
+                            {% else %}
+                                bg-white/10 border border-white/20 text-white hover:bg-feastar-gold hover:text-feastar-dark
+                            {% endif %}">
+                            {{ mesa.numero }}
+                        </button>
+                    {% endfor %}
+                </div>
+                <p class="text-gray-400 text-xs mt-3">Elige el número de mesa donde comerás.</p>
+            </div>
+        </div>
+
+        <!-- PANEL DERECHO -->
+        <div class="w-full md:w-1/2 p-8 bg-white flex flex-col justify-center">
+
+            <!-- 🔽 Selector de tipo -->
+            <div class="mb-6">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tipo de servicio</label>
+                <select id="tipoServicio" class="w-full border border-gray-300 rounded-lg px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-feastar-orange">
+                    <option value="recoger">Recoger</option>
+                    <option value="sucursal">Comer en sucursal</option>
+                </select>
+            </div>
+
+            <h3 class="text-2xl font-black text-feastar-dark uppercase mb-6 text-center md:text-left">Datos de Tarjeta</h3>
+
+            <form action="{% url 'confirmar_pedido' %}" method="POST" class="space-y-5">
+                {% csrf_token %}
+                <input type="hidden" name="mesa_id" id="mesaSeleccionada">
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nombre en la tarjeta</label>
+                    <input id="nombreTarjeta" type="text" placeholder="Como aparece en el plástico"
+                        class="campo-tarjeta w-full bg-gray-50 border border-gray-200 text-feastar-dark rounded-lg px-4 py-3 focus:outline-none focus:border-feastar-orange focus:ring-1 focus:ring-feastar-orange transition font-medium">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Número de Tarjeta</label>
+                    <input id="numeroTarjeta" type="text" placeholder="0000 0000 0000 0000" maxlength="19"
+                        class="campo-tarjeta w-full bg-gray-50 border border-gray-200 text-feastar-dark rounded-lg px-4 py-3 pl-12 focus:outline-none focus:border-feastar-orange focus:ring-1 focus:ring-feastar-orange transition font-mono">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Expiración</label>
+                        <input id="expTarjeta" type="text" placeholder="MM/YY" maxlength="5"
+                            class="campo-tarjeta w-full bg-gray-50 border border-gray-200 text-feastar-dark rounded-lg px-4 py-3 text-center focus:outline-none focus:border-feastar-orange focus:ring-1 focus:ring-feastar-orange transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">CVV</label>
+                        <input id="cvvTarjeta" type="password" placeholder="Ej: 123" maxlength="4"
+                            class="campo-tarjeta w-full bg-gray-50 border border-gray-200 text-feastar-dark rounded-lg px-4 py-3 text-center focus:outline-none focus:border-feastar-orange focus:ring-1 focus:ring-feastar-orange transition">
+                    </div>
+                </div>
+
+                <!-- 💳 Checkbox pagar en sucursal -->
+                <div class="flex items-center gap-3 mt-2">
+                    <input id="pagarSucursal" type="checkbox" class="w-5 h-5 accent-feastar-orange">
+                    <label for="pagarSucursal" class="text-sm font-semibold text-feastar-dark cursor-pointer">
+                        Pagar en sucursal
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-feastar-orange text-white font-black uppercase tracking-widest py-4 rounded-lg shadow-lg hover:bg-red-600 hover:scale-[1.02] transition-all duration-300 flex justify-center items-center gap-2 mt-6">
+                    <span>Confirmar Pedido</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
+<!-- 🧠 SCRIPT INTERACTIVO -->
 <script>
-    // Desactivar campos si se selecciona "Pagar en sucursal"
-    const pagoSucursal = document.getElementById('pagoSucursal');
-    const campos = ['numero', 'exp', 'cvv'];
+document.addEventListener("DOMContentLoaded", () => {
+    const tipoServicio = document.getElementById("tipoServicio");
+    const tarjetaPanel = document.getElementById("tarjetaPanel");
+    const mesaPanel = document.getElementById("mesaPanel");
+    const mesaBtns = document.querySelectorAll(".mesa-btn");
+    const inputMesa = document.getElementById("mesaSeleccionada");
+    const pagarSucursal = document.getElementById("pagarSucursal");
+    const camposTarjeta = document.querySelectorAll(".campo-tarjeta");
 
-    pagoSucursal.addEventListener('change', () => {
-        const disabled = pagoSucursal.checked;
-        campos.forEach(id => {
-            const campo = document.getElementById(id);
-            campo.disabled = disabled;
-            campo.style.backgroundColor = disabled ? '#e9ecef' : '';
+    tipoServicio.addEventListener("change", () => {
+        if (tipoServicio.value === "sucursal") {
+            tarjetaPanel.classList.add("hidden");
+            mesaPanel.classList.remove("hidden");
+        } else {
+            mesaPanel.classList.add("hidden");
+            tarjetaPanel.classList.remove("hidden");
+        }
+    });
+
+    // Seleccionar mesa
+    mesaBtns.forEach(btn => {
+        if (!btn.classList.contains("cursor-not-allowed")) {
+            btn.addEventListener("click", () => {
+                mesaBtns.forEach(b => b.classList.remove("bg-feastar-gold", "text-feastar-dark"));
+                btn.classList.add("bg-feastar-gold", "text-feastar-dark");
+                inputMesa.value = btn.dataset.numero;
+            });
+        }
+    });
+
+    // Desactivar campos de tarjeta si se selecciona pagar en sucursal
+    pagarSucursal.addEventListener("change", () => {
+        const desactivar = pagarSucursal.checked;
+        camposTarjeta.forEach(campo => {
+            campo.disabled = desactivar;
+            campo.classList.toggle("bg-gray-200", desactivar);
         });
     });
-
-    // ✅ Confirmar pedido real en backend (vacía el carrito)
-    const form = document.getElementById('form-pago');
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert('✅ Pedido realizado con éxito. ¡Gracias por tu compra!');
-        window.location.href = "{% url 'confirmar_pedido' %}";
-    });
+});
 </script>
 
+<!-- ✅ MODAL DE ÉXITO -->
+{% if messages %}
+<div id="modalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+    <div id="successModal"
+        class="bg-white rounded-2xl shadow-2xl p-8 w-80 text-center animate-fade-in scale-95">
+        <i class="fa-solid fa-circle-check text-green-500 text-5xl mb-4"></i>
+        {% for message in messages %}
+            <p class="text-feastar-dark font-semibold mb-4">{{ message }}</p>
+        {% endfor %}
+        <button id="closeModal"
+            class="bg-feastar-orange text-white px-6 py-2 rounded-lg font-bold hover:bg-red-600 transition-all">
+            Aceptar
+        </button>
+    </div>
+</div>
+{% endif %}
+
+<!-- Animación del modal -->
 <style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .btn-success:hover {
-        background-color: #218838;
-    }
+@keyframes fade-in {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+.animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+}
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const closeBtn = document.getElementById("closeModal");
+    const overlay = document.getElementById("modalOverlay");
+    if (closeBtn && overlay) {
+        closeBtn.addEventListener("click", () => {
+            overlay.classList.add("hidden");
+        });
+    }
+});
+</script>
+
 {% endblock %}

@@ -4,73 +4,188 @@
 
 {% block content %}
 
-<h2 class="text-2xl font-bold mb-4">Categorías</h2>
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans">
 
-<a href="{% url 'categoria_agregar' %}" class="btn btn-primary mb-3">Agregar Categoría</a>
+    
+    <div class="
+        flex flex-col lg:flex-row lg:justify-between lg:items-center 
+        mb-8 border-b border-gray-300 pb-3 
+        space-y-4 lg:space-y-0
+    ">
+        
+        <h2 class="text-3xl font-extrabold text-gray-900">
+            <i class="fas fa-folder-open text-amber-600 mr-3"></i>Categorías
+        </h2>
+        
+        
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
+            
+            
+            <a href="{% url 'categoria_agregar' %}" class="
+                flex-shrink-0 inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-lg shadow-md 
+                bg-amber-600 hover:bg-amber-700 shadow-amber-500/50 
+                hover:shadow-lg hover:shadow-amber-600/60 transition duration-300
+            ">
+                <i class="fas fa-plus mr-2"></i> Agregar Categoría
+            </a>
 
-<table class="table table-hover shadow bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>Nombre</th>
-            <th>Productos</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+            
+            <div class="w-full lg:w-64 p-0 bg-white rounded-xl shadow-lg border border-gray-100 lg:shadow-none lg:border-none">
+                <form action="#" method="GET" class="flex items-center">
+                    
+                    
+                    <div class="relative flex-grow">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input 
+                            type="search" 
+                            name="q"
+                            placeholder="Buscar categoría..." 
+                            class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-l-lg lg:rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition duration-150 shadow-inner"
+                        >
+                    </div>
+                    
+                    
+                    <button 
+                        type="submit" 
+                        class="
+                            flex-shrink-0 inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-r-lg lg:rounded-lg shadow-md 
+                            bg-amber-600 hover:bg-amber-700 shadow-amber-500/50 
+                            hover:shadow-lg hover:shadow-amber-600/60 transition duration-300 h-full
+                        "
+                    >
+                        <i class="fas fa-search"></i> 
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
 
-    <tbody>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
         {% for categoria in categorias %}
-        <tr>
-            <td class="fw-bold">{{ categoria.nombre }}</td>
-
-            <!-- CANTIDAD DE PRODUCTOS -->
-            <td>
-                <span class="badge bg-info text-dark">
-                    {{ categoria.producto_set.count }} producto(s)
-                </span>
-            </td>
-
-            <!-- BOTÓN PARA VER DESCRIPCIÓN -->
-            <td>
-                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#descripcionModal{{ categoria.id }}">
-                    Ver descripción
-                </button>
-            </td>
-
-            <!-- ACCIONES -->
-            <td>
-                <a href="{% url 'categoria_editar' categoria.id %}" class="text-primary">Editar</a> |
-                <a href="{% url 'categoria_eliminar' categoria.id %}" class="text-danger">Eliminar</a>
-            </td>
-        </tr>
-
-        <!-- MODAL DE DESCRIPCIÓN -->
-        <div class="modal fade" id="descripcionModal{{ categoria.id }}" tabindex="-1"
-            aria-labelledby="descripcionLabel{{ categoria.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="descripcionLabel{{ categoria.id }}">
-                            {{ categoria.nombre }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <p class="text-muted">
-                            {{ categoria.descripcion }}
-                        </p>
-                    </div>
-
+        
+        
+        <div class="
+            bg-white p-6 rounded-xl shadow-xl transition-all duration-300 ease-in-out border-t-4 border-amber-500 
+            hover:shadow-2xl hover:scale-[1.02]
+        ">
+            <div class="flex items-start space-x-4 mb-4 pb-2 border-b border-gray-100">
+                
+                <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-archive text-xl"></i>
                 </div>
+                
+                <div>
+                    
+                    <h3 class="text-xl font-bold text-gray-900">{{ categoria.nombre }}</h3>
+                    
+                    
+                    <p class="text-sm text-gray-500 flex items-center mt-1">
+                        <i class="fas fa-box text-gray-400 mr-2"></i>
+                        <span class="font-semibold text-amber-700 mr-2">{{ categoria.producto_set.count }}</span> Producto(s)
+                    </p>
+                </div>
+            </div>
+            
+            
+            <div class="mt-4 space-y-3">
+                
+                
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <span class="text-sm font-semibold uppercase text-gray-500 mb-1 block">Descripción</span>
+                    
+                    
+                    <div class="flex items-center justify-between">
+                        <p class="text-gray-700 text-sm italic line-clamp-2 w-full pr-2">
+                             {{ categoria.descripcion|default:"Sin descripción." }}
+                        </p>
+                        
+                        <button type="button" class="
+                            flex-shrink-0 inline-flex items-center px-3 py-1 text-xs font-medium rounded-full 
+                            bg-amber-500 text-white hover:bg-amber-600 transition duration-150
+                        " onclick="openModal('{{ categoria.id }}')">
+                            Ver
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="mt-6 flex justify-end space-x-3">
+                
+                <a href="{% url 'categoria_editar' categoria.id %}" class="
+                    inline-flex items-center px-4 py-2 border border-amber-500 text-sm font-medium rounded-lg shadow-md 
+                    text-amber-600 bg-white hover:bg-amber-50 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition duration-150
+                ">
+                    <i class="fas fa-edit mr-2"></i> Editar
+                </a>
+                
+                
+                <a href="{% url 'categoria_eliminar' categoria.id %}" class="
+                    inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md 
+                    text-white bg-red-600 hover:bg-red-700 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150
+                ">
+                    <i class="fas fa-trash-alt mr-2"></i> Eliminar
+                </a>
             </div>
         </div>
 
         {% endfor %}
-    </tbody>
-</table>
 
+    </div>
+
+    
+    {% for categoria in categorias %}
+    <div id="descripcionModal-{{ categoria.id }}" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full transform transition-all duration-300 scale-95" role="dialog" aria-modal="true">
+            
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h5 class="text-xl font-bold text-gray-900">
+                    {{ categoria.nombre }}
+                </h5>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition duration-150" onclick="closeModal('{{ categoria.id }}')">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            
+            <div class="p-6">
+                <p class="text-gray-700 leading-relaxed">
+                    {{ categoria.descripcion|default:"No se ha proporcionado una descripción para esta categoría." }}
+                </p>
+            </div>
+
+            
+            <div class="p-4 border-t border-gray-200 flex justify-end">
+                <button type="button" class="
+                    inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg shadow-sm 
+                    text-gray-700 bg-white hover:bg-gray-50 transition duration-150
+                " onclick="closeModal('{{ categoria.id }}')">
+                    Cerrar
+                </button>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    
+    <script>
+        function openModal(id) {
+            document.getElementById('descripcionModal-' + id).classList.remove('hidden');
+            document.getElementById('descripcionModal-' + id).classList.add('flex');
+            document.body.classList.add('overflow-hidden'); 
+        }
+
+        function closeModal(id) {
+            document.getElementById('descripcionModal-' + id).classList.add('hidden');
+            document.getElementById('descripcionModal-' + id).classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }
+    </script>
+</div>
 {% endblock %}

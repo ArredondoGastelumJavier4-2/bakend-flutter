@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.contrib.auth.models import User
 
-from .models import Producto, Categoria, Pedido
+from .models import Producto, Categoria, Pedido, Mesa
 from .forms import FormProducto, FormCategoria, FormPedidoEstado
 
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -344,3 +344,22 @@ def perfil_admin(request):
         return redirect("perfil_admin")
 
     return render(request, "menu/admin_panel/perfil_admin.html", {"perfil": perfil})
+
+
+from django.http import JsonResponse
+
+@admin_required
+def mesa_lista(request):
+    mesas = Mesa.objects.all().order_by('numero')
+
+    if request.method == 'POST':
+        mesa_id = request.POST.get('mesa_id')
+        if mesa_id:
+            mesa = Mesa.objects.get(id=mesa_id)
+            mesa.ocupada = not mesa.ocupada
+            mesa.save()
+            return JsonResponse({'success': True, 'ocupada': mesa.ocupada})
+        else:
+            return JsonResponse({'success': False, 'error': 'Mesa no encontrada'})
+
+    return render(request, 'menu/admin_panel/mesa_lista.html', {'mesas': mesas})

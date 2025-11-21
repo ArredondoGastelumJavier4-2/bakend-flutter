@@ -1,63 +1,72 @@
 {% extends 'menu/base.html' %}
 {% load static %}
+
 {% block title %}{{ producto.nombre }}{% endblock %}
 
 {% block content %}
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <!-- Imagen del producto -->
-        <div class="col-md-5 text-center">
-            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}"
-                 class="img-fluid rounded shadow-lg" style="max-height: 400px; object-fit: cover;">
+<div class="min-h-screen bg-[#FFF9F2] flex items-center justify-center py-10">
+
+    <!-- CONTENEDOR VERDE -->
+    <div class="relative bg-[#4B5320] p-10 rounded-xl flex flex-col lg:flex-row items-center gap-10">
+
+        <!-- IMAGEN SALIDA -->
+        <div class="relative lg:-ml-72">
+            <img src="{{ producto.imagen.url }}"
+                alt="{{ producto.nombre }}"
+                class="rounded-xl shadow-xl w-[380px] h-[300px] 
+                    md:w-[500px] md:h-[380px] 
+                    lg:w-[650px] lg:h-[475px] object-cover">
         </div>
 
-        <!-- Información -->
-        <div class="col-md-6">
-            <h2 class="fw-bold mb-2">{{ producto.nombre }}</h2>
-            <p class="text-muted">{{ producto.descripcion }}</p>
-            <h4 class="text-success fw-semibold mb-4">Precio: ${{ producto.precio }}</h4>
+        <!-- CARD DENTRO DEL VERDE -->
+        <div class="bg-[#FFF9F2] p-6 rounded-xl w-full max-w-[500px]">
 
-            <!-- Formulario para agregar al carrito -->
+            <h2 class="text-3xl font-bold text-center mb-4 text-[#393B26]">
+                {{ producto.nombre }}
+            </h2>
+
+            <p class="text-center text-gray-700 mb-4">
+                {{ producto.descripcion }}
+            </p>
+
+            <p class="text-xl font-semibold mb-6 text-[#43462C] text-center">
+                Precio: ${{ producto.precio }}
+            </p>
+
             <form method="POST" action="{% url 'agregar_carrito' producto.id %}">
                 {% csrf_token %}
 
-                <!-- Cantidad -->
-                <div class="d-flex align-items-center mb-4">
-                    <label for="cantidad" class="me-2 fw-semibold">Cantidad:</label>
-                    <select id="cantidad" name="cantidad" class="form-select w-auto">
+                <div class="flex items-center justify-center gap-4 mb-6">
+                    <span class="font-semibold text-[#43462C]">Cantidad:</span>
+
+                    <select name="cantidad"
+                        class="border border-gray-300 rounded-lg p-2 w-20 text-center">
                         {% for i in "12345" %}
-                            <option value="{{ i }}">{{ i }}</option>
+                        <option value="{{ i }}">{{ i }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <!-- Instrucciones especiales -->
-                <div class="mb-4">
-                    <label for="nota" class="form-label fw-semibold">Instrucciones especiales</label>
-                    <textarea id="nota" name="nota" class="form-control" rows="3" placeholder="Ejemplo: sin queso, cortar en 8 rebanadas, etc."></textarea>
-                    <small class="text-muted">Agrega notas o preferencias para tu pedido.</small>
-                </div>
+                <label class="font-semibold text-[#43462C] block">
+                    Instrucciones específicas:
+                </label>
 
-                <!-- Botón -->
-                <button type="submit" class="btn btn-dark w-100 py-3 fs-5 shadow-sm">
-                    🛒 Agregar al pedido
+                <textarea name="nota"
+                    placeholder="Ejemplo: Sin queso, cortado en 8 rebanadas"
+                    class="w-full border border-gray-300 rounded-lg p-3 mt-2 mb-6 h-28 resize-none"></textarea>
+
+                <button
+                    class="w-full bg-[#4B5320] hover:bg-[#43462C] text-white py-3 rounded-lg shadow-md font-semibold transition">
+                    Agregar al carrito
                 </button>
-            </form>
-        </div>
-    </div>
-</div>
 
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    h2, h4 {
-        color: #222;
-    }
-    .btn-dark:hover {
-        background-color: #000;
-    }
-</style>
+            </form>
+
+        </div> <!-- FIN CARD -->
+
+    </div> <!-- FIN CONTENEDOR VERDE -->
+
+</div>
 
 {% endblock %}

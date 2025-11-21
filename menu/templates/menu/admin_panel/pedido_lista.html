@@ -2,33 +2,116 @@
 {% block title %}Pedidos{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Pedidos</h2>
 
-<table class="table table-hover shadow bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Cliente</th>
-            <th>Total</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans">
 
-    <tbody>
+    <div class="
+        flex flex-col lg:flex-row lg:justify-between lg:items-center 
+        mb-8 border-b border-gray-300 pb-3 
+        space-y-4 lg:space-y-0
+    ">
+        <h2 class="text-3xl font-extrabold text-gray-900">
+            <i class="fas fa-receipt text-purple-600 mr-3"></i>Pedidos
+        </h2>
+
+        <div
+            class="w-full lg:w-96 p-0 bg-white rounded-xl shadow-lg border border-gray-100 lg:shadow-none lg:border-none">
+            <form action="#" method="GET" class="flex items-center">
+
+                <div class="relative flex-grow">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="search" name="q" placeholder="Buscar pedido por ID o cliente..."
+                        class="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-l-lg lg:rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition duration-150 shadow-inner">
+                </div>
+
+                <button type="submit" class="
+                        flex-shrink-0 inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-r-lg lg:rounded-lg shadow-md 
+                        bg-purple-600 hover:bg-purple-700 shadow-purple-500/50 
+                        hover:shadow-lg hover:shadow-purple-600/60 transition duration-300 h-full
+                    ">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
         {% for pedido in pedidos %}
-        <tr>
-            <td>{{ pedido.id }}</td>
-            <td>{{ pedido.cliente.username }}</td>
-            <td>${{ pedido.total }}</td>
-            <td>{{ pedido.estatus }}</td>
-            <td>{{ pedido.fecha }}</td>
-            <td>
-                <a href="{% url 'pedido_detalle' pedido.id %}" class="text-primary">Ver</a>
-            </td>
-        </tr>
+
+        <div class="
+            bg-white p-6 rounded-xl shadow-xl transition-all duration-300 ease-in-out border-t-4 border-purple-500 
+            hover:shadow-2xl hover:scale-[1.02]
+        ">
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                <div class="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    ID: <span class="text-lg font-extrabold text-purple-600">{{ pedido.id }}</span>
+                </div>
+
+                <p class="text-sm text-gray-700 flex items-center font-medium">
+                    <i class="fas fa-user-circle text-gray-400 mr-2"></i>{{ pedido.cliente.username }}
+                </p>
+            </div>
+
+
+            <div class="mt-4 space-y-3">
+
+                <div class="flex items-center justify-between bg-purple-50 p-3 rounded-lg">
+                    <span class="text-base font-semibold text-purple-800 flex items-center">
+                        <i class="fas fa-money-bill-wave text-purple-600 mr-2"></i> Total
+                    </span>
+                    <span class="text-2xl font-extrabold text-purple-900">
+                        ${{ pedido.total }}
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-between text-sm text-gray-600">
+                    <span class="flex items-center">
+                        <i class="fas fa-calendar-alt text-gray-400 mr-2"></i> Fecha
+                    </span>
+                    <span class="font-medium">{{ pedido.fecha }}</span>
+                </div>
+
+                <div class="flex items-center justify-between text-sm text-gray-600">
+                    <span class="flex items-center">
+                        <i class="fas fa-truck text-gray-400 mr-2"></i> Estado
+                    </span>
+                    <span class="
+                        font-semibold py-1 px-3 rounded-full text-xs uppercase tracking-wider
+                        {% if pedido.estatus == 'Completado' %}
+                            bg-green-100 text-green-800
+                        {% elif pedido.estatus == 'Pendiente' %}
+                            bg-yellow-100 text-yellow-800
+                        {% else %}
+                            bg-gray-100 text-gray-800
+                        {% endif %}
+                    ">
+                        {{ pedido.estatus }}
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="mt-6 flex justify-end">
+                <a href="{% url 'pedido_detalle' pedido.id %}" class="
+                    inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-md 
+                    text-white bg-purple-600 hover:bg-purple-700 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition duration-150
+                ">
+                    <i class="fas fa-eye mr-2"></i> Ver Detalle
+                </a>
+            </div>
+        </div>
+        {% empty %}
+
+        <div class="col-span-full bg-white p-6 rounded-xl shadow-lg">
+            <p class="text-center text-gray-500 text-lg italic">
+                No hay pedidos registrados en este momento.
+            </p>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
+
+    </div>
+</div>
 {% endblock %}

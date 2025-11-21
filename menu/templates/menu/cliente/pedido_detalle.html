@@ -1,52 +1,100 @@
 {% extends 'menu/base.html' %}
+{% load static %}
 {% block title %}Pedido #{{ pedido.id }}{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="bg-white p-4 shadow-sm rounded">
-        <h3 class="fw-bold mb-3">Pedido #{{ pedido.id }}</h3>
-        <p class="text-muted mb-1">
-            Fecha: {{ pedido.fecha|date:"d/m/Y H:i" }}
-        </p>
-        <p class="mb-3">
-            Estado:
-            {% if pedido.estatus == "activo" %}
-                <span class="badge bg-warning text-dark">Activo</span>
-            {% elif pedido.estatus == "listo" %}
-                <span class="badge bg-info text-dark">Listo</span>
-            {% elif pedido.estatus == "entregado" %}
-                <span class="badge bg-success">Entregado</span>
-            {% endif %}
-        </p>
 
-        <hr>
+<div class="flex justify-center py-10 bg-[#FFF9F2] min-h-screen">
 
-        <h5 class="fw-semibold mb-3">Productos del pedido</h5>
-        {% for item in detalles %}
-        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-            <div>
-                <strong>{{ item.producto.nombre }}</strong><br>
-                <small class="text-muted">Cantidad: {{ item.cantidad }}</small>
-            </div>
-            <div>
-                <span class="fw-semibold">${{ item.cantidad|floatformat:0|add:"0"|floatformat:2 }}</span>
-            </div>
+    <!-- CARD DEL PEDIDO -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-[700px]">
+
+        {% if detalles %}
+
+        <!-- HEADER -->
+        <div class="flex flex-col items-center mb-5 text-center">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-[60px] mb-2">
+            <h4 class="text-[28px] font-bold text-[#393B26]">Pedido #{{ pedido.id }}</h4>
+            <small class="text-[#000000] text-[17px]">
+                {{ detalles|length }} artículo{% if detalles|length > 1 %}s{% endif %} • {{ pedido.fecha|date:"d/m/Y H:i" }}
+            </small>
         </div>
-        {% empty %}
-        <p class="text-muted">No hay productos en este pedido.</p>
+
+        <div class="border-t border-[#e5e5e5] my-4"></div>
+
+        <!-- ESTATUS -->
+        <div class="flex justify-center mb-4">
+            {% if pedido.estatus == "activo" %}
+            <span class="px-3 py-1 rounded-full bg-[#FF5722] text-[#FFF9F2] text-sm font-semibold shadow-sm flex items-center gap-1">
+                <i class="fa-solid fa-clock"></i> Activo
+            </span>
+            {% elif pedido.estatus == "listo" %}
+            <span class="px-3 py-1 rounded-full bg-[#F4B41A] text-[#FFF9F2] text-sm font-semibold shadow-sm flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> Listo
+            </span>
+            {% elif pedido.estatus == "entregado" %}
+            <span class="px-3 py-1 rounded-full bg-[#4B5320] text-[#FFF9F2] text-sm font-semibold shadow-sm flex items-center gap-1">
+                <i class="fa-solid fa-truck"></i> Entregado
+            </span>
+            {% endif %}
+        </div>
+
+        <!-- ITEMS DEL PEDIDO -->
+        <h5 class="text-xl font-bold text-[#393B26] mb-4 border-l-4 border-[#9CAB48] pl-3">Artículos comprados</h5>
+        {% for item in detalles %}
+        <div class="bg-[#9CAB48] text-white p-4 rounded-2xl mb-4 shadow-md flex items-center gap-4 relative">
+
+            <img src="{{ item.producto.imagen.url }}"
+                alt="{{ item.producto.nombre }}"
+                class="rounded-xl w-[75px] h-[75px] object-cover shadow">
+
+            <div class="flex flex-col">
+                <span class="text-[18px] font-bold">{{ item.producto.nombre }}</span>
+                <span class="text-[16px] opacity-90">Cantidad: {{ item.cantidad }}</span>
+            </div>
+
+            <span class="ml-auto font-semibold text-[18px] text-[#FFF9F2]">
+                ${{ item.subtotal|floatformat:2 }}
+            </span>
+
+        </div>
         {% endfor %}
 
-        <hr>
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold">Total:</h5>
-            <h4 class="text-success fw-bold">${{ pedido.total }}</h4>
+        <div class="border-t border-[#e5e5e5] my-4"></div>
+
+        <!-- TOTAL -->
+        <div class="flex justify-between items-center text-[20px] text-[#43462C] font-semibold px-2 mb-5">
+            <span>Total</span>
+            <span>${{ pedido.total|floatformat:2 }}</span>
         </div>
 
-        <div class="text-center mt-4">
-            <a href="{% url 'compras_cliente' %}" class="btn btn-outline-dark">
-                ← Volver a mis pedidos
+        <!-- BOTÓN VOLVER -->
+        <div class="text-center">
+            <a href="{% url 'compras_cliente' %}"
+            class="w-full bg-[#4B5320] hover:bg-[#43462C] text-white py-3 rounded-lg shadow-md font-semibold flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                Volver a mis pedidos
             </a>
         </div>
+
+        {% else %}
+        <!-- CUANDO NO HAY PRODUCTOS -->
+        <div class="text-center py-10">
+            <h4 class="text-[#43462C] mb-3 text-xl flex flex-col items-center">
+                <i class="fa-solid fa-box-open text-3xl mb-2"></i>
+                Este pedido no tiene productos.
+            </h4>
+
+            <a href="{% url 'compras_cliente' %}"
+            class="inline-flex items-center gap-2 bg-[#3D5C1F] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#324A19] transition">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                Volver a mis pedidos
+            </a>
+        </div>
+        {% endif %}
+
     </div>
+
 </div>
+
 {% endblock %}

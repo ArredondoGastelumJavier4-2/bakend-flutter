@@ -4,92 +4,160 @@
 
 {% block content %}
 
-<div class="container d-flex flex-column align-items-center mt-4">
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans flex items-start justify-center">
 
-    <h2 class="mb-4">Mi perfil</h2>
+    <div class="w-full max-w-2xl mt-6">
 
-    <!-- Imagen actual -->
-    {% if perfil.foto %}
-        <img src="{{ perfil.foto.url }}" alt="Foto de perfil"
-             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
-    {% elif perfil.avatar_default %}
-        <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar actual"
-             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
-    {% else %}
-        <img src="{% static 'images/imagen01.png' %}" alt="Avatar por defecto"
-             id="preview-img" class="rounded-circle mb-3 shadow" width="120" height="120">
-    {% endif %}
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-8 pb-4 text-center">
+            <i class="fas fa-user text-blue-600 mr-2"></i> Mi Perfil
+        </h2>
 
-    <form method="POST" enctype="multipart/form-data"
-          class="bg-white shadow p-4 rounded w-100" style="max-width: 500px;">
-        {% csrf_token %}
 
-        <label class="form-label">Nombre</label>
-        <input class="form-control mb-3" type="text" name="first_name" value="{{ user.first_name }}">
+        <form method="POST" enctype="multipart/form-data" id="perfilForm"
+            class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border-t-4 border-blue-500">
+            {% csrf_token %}
 
-        <label class="form-label">Apellido</label>
-        <input class="form-control mb-3" type="text" name="last_name" value="{{ user.last_name }}">
 
-        <label class="form-label">Correo</label>
-        <input class="form-control mb-3" type="email" name="email" value="{{ user.email }}">
+            <div class="flex flex-col items-center mb-8 border-b border-gray-100 pb-6">
 
-        <label class="form-label">Cambiar foto</label>
-        <input class="form-control mb-3" type="file" name="foto" accept="image/*">
+                <div class="relative mb-4 group">
+                    {% if perfil.foto %}
+                    <img src="{{ perfil.foto.url }}" alt="Foto de perfil" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg transition-transform duration-300 group-hover:scale-105">
+                    {% elif perfil.avatar_default %}
+                    <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
+                    {% else %}
+                    <img src="{% static 'images/imagen01.png' %}" alt="Por defecto" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
+                    {% endif %}
 
-        <label class="form-label">Elegir avatar</label>
-        <div class="avatar-container">
-            {% for i in "12345" %}
-                <label class="avatar-option">
-                    <input type="radio" name="avatar_default" value="imagen0{{ i }}.png"
-                           {% if perfil.avatar_default == "imagen0"|add:i|add:".png" %}checked{% endif %}>
-                    <img src="{% static 'images/imagen0' %}{{ i }}.png" alt="Avatar {{ i }}">
-                </label>
-            {% endfor %}
-        </div>
 
-        <label class="form-label mt-3">Nueva contraseña (opcional)</label>
-        <input class="form-control mb-3" type="password" name="password">
+                    <div
+                        class="absolute inset-0 w-32 h-32 rounded-full bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                </div>
 
-        <button class="btn btn-success w-100 mt-2">Guardar cambios</button>
-    </form>
+                <div class="w-full max-w-sm">
+                    <label for="fotoInput" class="block text-sm font-semibold text-gray-700 mb-2 text-center">Cambiar
+                        foto</label>
+                    <input type="file" name="foto" id="fotoInput" accept="image/*" class="
+                        block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
+                        file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer
+                    ">
+                </div>
+            </div>
+
+
+            <div class="mb-8">
+                <p class="text-sm font-semibold text-gray-700 mb-3 text-center">O elegir un avatar predeterminado</p>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    {% for i in "12345" %}
+                    {% with filename='imagen0'|add:i|add:'.png' %}
+                    <label class="cursor-pointer">
+                        <input type="radio" name="avatar_default" value="{{ filename }}" {% if perfil.avatar_default is filename %}checked{% endif %} class="hidden avatar-radio"
+                            data-src="{% static 'images/' %}{{ filename }}">
+                        <img src="{% static 'images/' %}{{ filename }}" alt="Avatar {{ i }}" class="w-16 h-16 rounded-full object-cover border-4 border-transparent transition-all duration-200 hover:border-blue-300 avatar-option
+                                 {% if perfil.avatar_default == filename %}border-blue-500 shadow-md{% endif %}">
+                    </label>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+
+                <div class="mb-4">
+                    <label for="id_first_name" class="block text-sm font-semibold text-gray-700 mb-2">Nombre</label>
+                    <input type="text" id="id_first_name" name="first_name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                        value="{{ user.first_name }}">
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_last_name" class="block text-sm font-semibold text-gray-700 mb-2">Apellido</label>
+                    <input type="text" id="id_last_name" name="last_name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                        value="{{ user.last_name }}">
+                </div>
+            </div>
+
+
+            <div class="mb-4">
+                <label for="id_email" class="block text-sm font-semibold text-gray-700 mb-2">Correo electrónico</label>
+                <input type="email" id="id_email" name="email"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                    value="{{ user.email }}">
+            </div>
+
+
+            <div class="mb-6">
+                <label for="id_password" class="block text-sm font-semibold text-gray-700 mb-2">Nueva contraseña
+                    (opcional)</label>
+                <input type="password" id="id_password" name="password"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                    placeholder="Deja vacío si no deseas cambiarla">
+            </div>
+
+
+            <button type="submit" class="
+                inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-extrabold rounded-lg shadow-md 
+                text-white bg-blue-600 hover:bg-blue-700 shadow-blue-500/50 
+                hover:shadow-xl hover:shadow-blue-600/60 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition duration-300
+            ">
+                <i class="fas fa-save mr-2"></i> Guardar cambios
+            </button>
+        </form>
+    </div>
 </div>
 
-<!-- 🪞 Vista previa instantánea -->
 <script>
-document.querySelectorAll('input[name="avatar_default"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        const selected = this.value;
-        document.getElementById('preview-img').src = `/static/images/${selected}`;
-    });
-});
-</script>
 
-<style>
-.avatar-container {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-.avatar-option input {
-    display: none;
-}
-.avatar-option img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
-}
-.avatar-option input:checked + img {
-    border-color: #28a745;
-    transform: scale(1.15);
-}
-.avatar-option img:hover {
-    transform: scale(1.1);
-}
-</style>
+    document.getElementById('fotoInput').addEventListener('change', function (event) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('previewFoto').src = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    });
+
+
+    document.querySelectorAll('input[name="avatar_default"]').forEach(radio => {
+
+        const img = radio.closest('label').querySelector('img');
+
+        if (radio.checked) {
+            img.classList.add('border-blue-500', 'shadow-md');
+        }
+
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('border-blue-500', 'shadow-md'));
+
+            const selectedImg = this.closest('label').querySelector('img');
+            selectedImg.classList.add('border-blue-500', 'shadow-md');
+
+            document.getElementById('previewFoto').src = selectedImg.src;
+        });
+    });
+
+
+    document.querySelectorAll('.avatar-option').forEach(img => {
+        img.addEventListener('click', () => {
+            const radio = img.previousElementSibling;
+
+            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('border-blue-500', 'shadow-md'));
+            img.classList.add('border-blue-500', 'shadow-md');
+
+            radio.checked = true;
+            document.getElementById('previewFoto').src = img.src;
+
+
+            const changeEvent = new Event('change');
+            radio.dispatchEvent(changeEvent);
+        });
+    });
+</script>
 
 {% endblock %}

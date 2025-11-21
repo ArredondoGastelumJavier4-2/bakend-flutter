@@ -3,68 +3,89 @@
 {% block title %}Carrito{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    {% if items %}
-    <div class="bg-white shadow-lg rounded p-4 mx-auto" style="max-width: 700px;">
 
-        <!-- Encabezado -->
-        <div class="d-flex align-items-center mb-3">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" style="height: 60px;" class="me-3">
-            <div>
-                <h4 class="fw-bold mb-0">Tu pedido</h4>
-                <small class="text-muted">{{ items|length }} artículo{% if items|length > 1 %}s{% endif %}</small>
-            </div>
+<div class="flex justify-center py-10 bg-[#FFF9F2]">
+
+    <!-- CARD NORMAL -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 w-full max-w-[700px]">
+
+        {% if items %}
+
+        <!-- HEADER -->
+        <div class="flex flex-col items-center mb-5 text-center">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-[60px] mb-2">
+
+            <h4 class="text-[28px] font-bold text-[#393B26]">Tu pedido</h4>
+
+            <small class="text-[#000000] text-[17px]">
+                {{ items|length }} artículo{% if items|length > 1 %}s{% endif %}
+            </small>
         </div>
 
-        <hr>
+        <div class="border-t border-[#e5e5e5] my-4"></div>
 
-        <!-- Lista de productos -->
+        <!-- ITEMS -->
         {% for item in items %}
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <div class="d-flex align-items-center">
-                <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}"
-                     class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                <div>
-                    <span class="fw-semibold">{{ item.cantidad }}x</span>
-                    <span>{{ item.producto.nombre }}</span><br>
-                    <a href="{% url 'eliminar_carrito' item.id %}" class="small text-danger text-decoration-none">Eliminar</a>
-                </div>
+        <div class="bg-[#9CAB48] text-white p-4 rounded-2xl mb-4 shadow-md flex items-center gap-4 relative">
+
+            <img src="{{ item.producto.imagen.url }}"
+                alt="{{ item.producto.nombre }}"
+                class="rounded-xl w-[75px] h-[75px] object-cover shadow">
+
+            <div class="flex flex-col">
+                <span class="text-[18px] font-bold">{{ item.producto.nombre }}</span>
+                <span class="text-[16px] opacity-90">Cantidad: {{ item.cantidad }}</span>
             </div>
-            <span class="text-success fw-semibold fs-5">${{ item.subtotal }}</span>
+
+            <a href="{% url 'eliminar_carrito' item.id %}"
+                class="absolute right-4 bottom-3 text-white text-xl">
+                <i class="fa-solid fa-trash"></i>
+            </a>
+
+            <span class="ml-auto font-semibold text-[18px] text-[#FFF9F2]">
+                ${{ item.subtotal }}
+            </span>
+
         </div>
         {% endfor %}
 
-        <hr>
+        <div class="border-t border-[#e5e5e5] my-4"></div>
 
-        <!-- Subtotal -->
-        <div class="d-flex justify-content-between mb-3">
-            <span class="fw-semibold">Subtotal</span>
-            <span class="fw-bold text-success">${{ total }}</span>
+        <!-- TOTAL -->
+        <div class="flex justify-between items-center text-[20px] text-[#43462C] font-semibold px-2">
+            <span>Total</span>
+            <span>${{ total }}</span>
         </div>
 
-        <!-- Botón -->
-        <div class="text-center mt-4">
-            <a href="{% url 'pago_tarjeta' %}" 
-               class="btn btn-dark w-100 py-3 fs-5 fw-semibold shadow-sm">
-                Proceder al pago 💳
+        <!-- BOTÓN -->
+        <div class="text-center mt-5">
+            <a href="{% url 'pago_tarjeta' %}"
+            class="w-full bg-[#4B5320] hover:bg-[#43462C] text-white py-3 rounded-lg shadow-md font-semibold flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-credit-card"></i>
+                Proceder al pago
             </a>
         </div>
+
+        {% else %}
+
+        <!-- CARRITO VACÍO -->
+        <div class="text-center py-10">
+            <h4 class="text-[#43462C] mb-3 text-xl flex flex-col items-center">
+                <i class="fa-solid fa-cart-shopping text-3xl mb-2"></i>
+                Tu carrito está vacío
+            </h4>
+
+            <a href="{% url 'cliente_dashboard' %}"
+                class="inline-flex items-center gap-2 bg-[#3D5C1F] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#324A19] transition">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                Volver al menú
+            </a>
+        </div>
+
+        {% endif %}
+
     </div>
 
-    {% else %}
-    <div class="text-center py-5">
-        <h4 class="text-muted mb-3">🛒 Tu carrito está vacío</h4>
-        <a href="{% url 'cliente_dashboard' %}" class="btn btn-primary">Volver al menú</a>
-    </div>
-    {% endif %}
 </div>
 
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .btn-dark:hover {
-        background-color: #000;
-    }
-</style>
 {% endblock %}

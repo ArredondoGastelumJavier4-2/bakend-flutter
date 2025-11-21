@@ -5,71 +5,51 @@
 
 {% block content %}
 
-<!-- ✅ MODAL DE ÉXITO -->
-{% if messages %}
-<div id="modalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-  <div class="bg-white rounded-2xl shadow-2xl p-8 w-80 text-center animate-fade-in scale-95">
-      <i class="fa-solid fa-circle-check text-green-500 text-5xl mb-4"></i>
-      {% for message in messages %}
-          <p class="text-feastar-dark font-semibold mb-4">{{ message }}</p>
-      {% endfor %}
-      <button id="closeModal"
-          class="bg-feastar-orange text-white px-6 py-2 rounded-lg font-bold hover:bg-red-600 transition-all">
-          Aceptar
-      </button>
-  </div>
-</div>
-{% endif %}
-
-<style>
-@keyframes fade-in {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const closeBtn = document.getElementById("closeModal");
-  const overlay = document.getElementById("modalOverlay");
-  if (closeBtn && overlay) {
-      closeBtn.addEventListener("click", () => {
-          overlay.classList.add("hidden");
-      });
-  }
-});
-</script>
-
-<!-- ================================================== -->
-<!-- CONTENIDO ORIGINAL -->
-<!-- ================================================== -->
-
 <div class="min-h-screen bg-feastar-cream font-montserrat text-gray-800">
 
     <header class="max-w-7xl mx-auto px-4 pt-12 pb-8 text-center relative">
         
-            <h1 class="relative text-4xl md:text-6xl font-black text-center text-feastar-dark leading-tight mb-8 tracking-tight drop-shadow-lg">
-            <span class="block text-feastar-dark">Sabores auténticos</span>
-            <span class="relative font-playfair italic text-feastar-orange drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                tradición que se disfruta
-            </span>
+        <h1 class="text-4xl md:text-6xl font-black text-feastar-dark leading-tight uppercase mb-6">
+            Fonda Virtual<br>
+            As Tu Pedido Ahora<span class="font-playfair lowercase italic font-normal text-gray-600">Pedidos Rapido Solo Aqui</span>
+        </h1>
 
-        
-
-            <!-- Brillos decorativos -->
-            <span class="absolute -top-4 left-1/2 -translate-x-1/2 w-40 h-40 bg-feastar-gold/20 blur-3xl rounded-full"></span>
-            <span class="absolute bottom-0 right-1/2 translate-x-1/2 w-28 h-28 bg-feastar-orange/20 blur-2xl rounded-full"></span>
-            </h1>
-            <div class="w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-sm">
-            <img src="/static/images/portada.jpg"
+        <div class="w-full max-w-5xl mx-auto overflow-hidden rounded-lg shadow-sm">
+            <img src="https://images.unsplash.com/photo-1543353071-10c8ba85a941?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
                  class="w-full h-64 md:h-80 object-cover object-center" alt="Portada">
         </div>
     </header>
 
+    <section class="bg-feastar-olive text-white py-12 px-4 my-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-2xl font-bold text-feastar-gold mb-8 uppercase tracking-wider">Our Core Values</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-utensils text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Excellence</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-fire-burner text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Innovation</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-star text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Quality</h3>
+                </div>
+                <div class="flex flex-col items-center">
+                    <i class="fa-solid fa-leaf text-3xl mb-2"></i>
+                    <h3 class="text-feastar-gold font-bold text-sm uppercase">Sustainability</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="max-w-7xl mx-auto px-4 py-8">
+
+        <div class="flex justify-between items-end mb-10">
+            <h2 class="text-3xl md:text-4xl font-black text-feastar-dark uppercase">Our Offerings</h2>
+        </div>
 
         {% for item in data_categorias %}
             <div class="mb-16">

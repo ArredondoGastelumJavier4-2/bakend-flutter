@@ -3,134 +3,169 @@
 {% block title %}Perfil del Administrador{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="bg-white shadow-lg rounded p-5 mx-auto text-center" style="max-width: 600px;">
-        <h2 class="fw-bold mb-4">👨‍💼 Perfil del Administrador</h2>
 
-        <form method="POST" enctype="multipart/form-data" id="perfilForm">
+<div class="p-4 md:p-8 lg:p-10 bg-gray-50 min-h-screen font-sans flex items-start justify-center">
+
+    <div class="w-full max-w-2xl mt-6">
+
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-8 pb-4 text-center">
+            <i class="fas fa-user-shield text-purple-600 mr-2"></i> Perfil del Administrador
+        </h2>
+
+
+        <form method="POST" enctype="multipart/form-data" id="perfilForm"
+            class="bg-white p-6 md:p-8 rounded-xl shadow-2xl border-t-4 border-purple-500">
             {% csrf_token %}
 
-            <!-- FOTO ACTUAL -->
-            <div class="d-flex flex-column align-items-center mb-4">
-                {% if perfil.foto %}
-                    <img src="{{ perfil.foto.url }}" alt="Foto de perfil" id="previewFoto"
-                         class="rounded-circle shadow mb-3 perfil-foto">
-                {% elif perfil.avatar_default %}
-                    <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar"
-                         id="previewFoto" class="rounded-circle shadow mb-3 perfil-foto">
-                {% else %}
-                    <img src="{% static 'images/imagen01.png' %}" alt="Por defecto"
-                         id="previewFoto" class="rounded-circle shadow mb-3 perfil-foto">
-                {% endif %}
 
-                <div class="mt-2 w-75">
-                    <label class="form-label fw-semibold">Cambiar foto</label>
-                    <input type="file" name="foto" id="fotoInput" class="form-control">
+            <div class="flex flex-col items-center mb-8 border-b border-gray-100 pb-6">
+
+                <div class="relative mb-4 group">
+                    {% if perfil.foto %}
+                    <img src="{{ perfil.foto.url }}" alt="Foto de perfil" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg transition-transform duration-300 group-hover:scale-105">
+                    {% elif perfil.avatar_default %}
+                    <img src="{% static 'images/' %}{{ perfil.avatar_default }}" alt="Avatar" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
+                    {% else %}
+                    <img src="{% static 'images/imagen01.png' %}" alt="Por defecto" id="previewFoto"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg">
+                    {% endif %}
+
+
+                    <div
+                        class="absolute inset-0 w-32 h-32 rounded-full bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                        <i class="fas fa-camera text-white text-xl"></i>
+                    </div>
+                </div>
+
+                <div class="w-full max-w-sm">
+                    <label for="fotoInput" class="block text-sm font-semibold text-gray-700 mb-2 text-center">Cambiar
+                        foto</label>
+                    <input type="file" name="foto" id="fotoInput" class="
+                        block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 
+                        file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer
+                    ">
                 </div>
             </div>
 
-            <!-- AVATARES DEFAULT -->
-            <div class="mb-4">
-                <label class="form-label fw-semibold">O elegir un avatar predeterminado</label>
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
+
+            <div class="mb-8">
+                <p class="text-sm font-semibold text-gray-700 mb-3 text-center">O elegir un avatar predeterminado</p>
+                <div class="flex justify-center gap-4 flex-wrap">
                     {% for i in "12345" %}
-                        <label class="avatar-label">
-                            <input type="radio" name="avatar_default" value="imagen0{{ i }}.png"
-                                   {% if perfil.avatar_default == "imagen0"|add:i|add:".png" %}checked{% endif %}
-                                   class="d-none avatar-radio">
-                            <img src="{% static 'images/imagen0' %}{{ i }}.png"
-                                 alt="Avatar {{ i }}"
-                                 class="rounded-circle avatar-option {% if perfil.avatar_default == 'imagen0'|add:i|add:'.png' %}avatar-selected{% endif %}">
-                        </label>
+                    {% with filename='imagen0'|add:i|add:'.png' %}
+                    <label class="cursor-pointer">
+                        <input type="radio" name="avatar_default" value="{{ filename }}" {% if perfil.avatar_default is filename %}checked{% endif %} class="hidden avatar-radio"
+                            data-src="{% static 'images/' %}{{ filename }}">
+                        <img src="{% static 'images/' %}{{ filename }}" alt="Avatar {{ i }}" class="w-16 h-16 rounded-full object-cover border-4 border-transparent transition-all duration-200 hover:border-purple-300 avatar-option
+                                 {% if perfil.avatar_default == filename %}border-purple-500 shadow-md{% endif %}">
+                    </label>
+                    {% endwith %}
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- DATOS PERSONALES -->
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold">Nombre</label>
-                <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+
+                <div class="mb-4">
+                    <label for="id_first_name" class="block text-sm font-semibold text-gray-700 mb-2">Nombre</label>
+                    <input type="text" id="id_first_name" name="first_name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150"
+                        value="{{ request.user.first_name }}">
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_last_name" class="block text-sm font-semibold text-gray-700 mb-2">Apellidos</label>
+                    <input type="text" id="id_last_name" name="last_name"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150"
+                        value="{{ request.user.last_name }}">
+                </div>
             </div>
 
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold">Apellidos</label>
-                <input type="text" name="last_name" class="form-control" value="{{ request.user.last_name }}">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+
+                <div class="mb-4">
+                    <label for="id_email" class="block text-sm font-semibold text-gray-700 mb-2">Correo
+                        electrónico</label>
+                    <input type="email" id="id_email" name="email"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150"
+                        value="{{ request.user.email }}">
+                </div>
+
+
+                <div class="mb-4">
+                    <label for="id_telefono" class="block text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+                    <input type="text" id="id_telefono" name="telefono"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150"
+                        value="{{ perfil.telefono }}">
+                </div>
             </div>
 
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold">Correo electrónico</label>
-                <input type="email" name="email" class="form-control" value="{{ request.user.email }}">
+
+            <div class="mb-6">
+                <label for="id_password" class="block text-sm font-semibold text-gray-700 mb-2">Nueva contraseña</label>
+                <input type="password" id="id_password" name="password"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 transition duration-150"
+                    placeholder="Deja vacío si no deseas cambiarla">
             </div>
 
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold">Teléfono</label>
-                <input type="text" name="telefono" class="form-control" value="{{ perfil.telefono }}">
-            </div>
 
-            <!-- CONTRASEÑA -->
-            <div class="mb-3 text-start">
-                <label class="form-label fw-semibold">Nueva contraseña</label>
-                <input type="password" name="password" class="form-control" placeholder="Deja vacío si no deseas cambiarla">
-            </div>
-
-            <button type="submit" class="btn btn-success w-100 py-2 mt-3 fw-semibold">
-                💾 Guardar cambios
+            <button type="submit" class="
+                inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-extrabold rounded-lg shadow-md 
+                text-white bg-purple-600 hover:bg-purple-700 shadow-purple-500/50 
+                hover:shadow-xl hover:shadow-purple-600/60 focus:outline-none focus:ring-4 focus:ring-purple-500/50 transition duration-300
+            ">
+                <i class="fas fa-save mr-2"></i> Guardar cambios
             </button>
         </form>
     </div>
 </div>
 
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .perfil-foto {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border: 4px solid #eee;
-    }
-    .avatar-option {
-        width: 70px;
-        height: 70px;
-        object-fit: cover;
-        border: 3px solid transparent;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .avatar-option:hover {
-        transform: scale(1.1);
-        border-color: #198754;
-    }
-    .avatar-selected {
-        border-color: #28a745;
-        box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
-    }
-</style>
-
 <script>
-    // ✅ Preview instantáneo al subir nueva foto
-    document.getElementById('fotoInput').addEventListener('change', function(event) {
+    document.getElementById('fotoInput').addEventListener('change', function (event) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             document.getElementById('previewFoto').src = e.target.result;
         };
         reader.readAsDataURL(event.target.files[0]);
     });
 
-    // ✅ Selección de avatar (cambia visualmente y actualiza el preview)
+    document.querySelectorAll('input[name="avatar_default"]').forEach(radio => {
+
+        const img = radio.closest('label').querySelector('img');
+
+        if (radio.checked) {
+            img.classList.add('border-purple-500', 'shadow-md');
+        }
+
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('border-purple-500', 'shadow-md'));
+
+            const selectedImg = this.closest('label').querySelector('img');
+            selectedImg.classList.add('border-purple-500', 'shadow-md');
+
+            document.getElementById('previewFoto').src = selectedImg.src;
+        });
+    });
+
+
     document.querySelectorAll('.avatar-option').forEach(img => {
         img.addEventListener('click', () => {
-            // deseleccionar todos
-            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('avatar-selected'));
-            // seleccionar este
-            img.classList.add('avatar-selected');
-            // marcar el radio asociado
-            img.previousElementSibling.checked = true;
-            // actualizar el preview
+            const radio = img.previousElementSibling;
+
+            document.querySelectorAll('.avatar-option').forEach(i => i.classList.remove('border-purple-500', 'shadow-md'));
+            img.classList.add('border-purple-500', 'shadow-md');
+
+            radio.checked = true;
             document.getElementById('previewFoto').src = img.src;
+
+
+            const changeEvent = new Event('change');
+            radio.dispatchEvent(changeEvent);
         });
     });
 </script>
+
 {% endblock %}
