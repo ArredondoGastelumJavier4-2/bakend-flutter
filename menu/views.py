@@ -1,24 +1,53 @@
 # ======================================
 # IMPORTS NECESARIOS
 # ======================================
+# ============================
+# DJANGO CORE IMPORTS
+# ============================
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# ============================
+# DJANGO AUTH
+# ============================
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.contrib.auth.models import User
-from .forms import FormLogin, FormRegistro
-from .models import Producto, Categoria, Pedido, PedidoDetalle, Mesa
-from django.shortcuts import render, redirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .models import Pedido, Mesa
+from django.contrib.auth import login as django_login  # alias para evitar conflicto
+
+# ============================
+# BASE DE DATOS
+# ============================
 from django.db import transaction
+
+# ============================
+# PROYECTO LOCAL
+# ============================
+from .forms import FormLogin, FormRegistro
+from .models import (
+    Producto,
+    Categoria,
+    Pedido,
+    PedidoDetalle,
+    Mesa,
+    ApiToken,
+)
+
+# ============================
+# PYTHON NATIVO
+# ============================
+import json
+
 # ======================================
 # REGISTRO DE CLIENTES
 # ======================================
+# ======================================
+# REGISTRO DE CLIENTES (CON CARRITO)
+# ======================================
 def registro_view(request):
-    from .models import Perfil
+    from .models import Perfil, Carrito
     from .forms import FormRegistro
 
     if request.method == "POST":
@@ -36,6 +65,7 @@ def registro_view(request):
                 is_superuser=False
             )
 
+            # Crear perfil
             perfil = Perfil.objects.create(usuario=user)
 
             # Foto personalizada o avatar default
@@ -51,10 +81,15 @@ def registro_view(request):
 
             perfil.save()
 
+            # ============================================
+            # CREAR CARRITO AUTOMÁTICAMENTE
+            # ============================================
+            Carrito.objects.create(usuario=user)
+
             messages.success(request, "Registro exitoso. Ahora inicia sesión.")
             return redirect("login")
 
-        # Si el form es inválido
+        # Si el formulario es inválido → recarga con errores
         return render(request, "menu/autenticacion/registro.html", {"form": form})
 
     else:
@@ -387,3 +422,61 @@ def pedido_detalle(request, pedido_id):
     })
 
 
+
+# ======================================
+# api token pal fluter
+# ======================================
+@csrf_exempt
+def api_login(request):
+    """
+    Endpoint de login para la app Flutter.
+    Acepta:
+      - email
+      - password
+    Devuelve:
+      - token
+      - user_id
+      - email
+    """
+
+    # Solo POST
+    if request.method != "POST":
+        return JsonResponse({"error": "Método no permitido. Usa POST."}, status=405)
+
+    # Leer JSON recibido
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+
+    email = data.get("email")
+    password = data.get("password")
+
+    # Validar campos obligatorios
+    if not email or not password:
+        return JsonResponse({"error": "Faltan email o password."}, status=400)
+
+    # Buscar usuario por email
+    try:
+        user_obj = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=400)
+
+    # Autenticar usando el username real del usuario
+    user = authenticate(request, username=user_obj.username, password=password)
+
+    if user is None:
+        return JsonResponse({"error": "Credenciales incorrectas."}, status=400)
+
+    # Login en Django (opcional pero recomendado)
+    django_login(request, user)
+
+    # Obtener o generar token para API
+    token, _ = ApiToken.objects.get_or_create(user=user)
+
+    return JsonResponse({
+        "token": token.key,
+        "user_id": user.id,
+        "email": user.email,
+        "message": "Login exitoso."
+    }, status=200)

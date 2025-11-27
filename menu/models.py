@@ -100,3 +100,78 @@ class Mesa(models.Model):
 
     def __str__(self):
         return f"Mesa {self.numero} {'(Ocupada)' if self.ocupada else '(Libre)'}"
+    
+
+# -----------------------------
+# Token
+# -----------------------------
+
+from django.conf import settings
+from django.db import models
+import secrets  # lo usamos para generar tokens seguros
+
+
+def generate_token():
+    """
+    Genera un token aleatorio hexadecimal de 40 caracteres.
+    Usamos secrets para que sea criptográficamente seguro.
+    """
+    return secrets.token_hex(20)
+
+
+class ApiToken(models.Model):
+    """
+    Token de API para autenticar usuarios desde Flutter u otras apps.
+    Un usuario puede tener un token.
+    Si quieres que tenga varios, cambia OneToOneField por ForeignKey.
+    """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="api_token"
+    )
+    key = models.CharField(
+        max_length=40,
+        unique=True,
+        default=generate_token  # se genera automáticamente
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Token de {self.user} ({self.key})"
+
+
+# -----------------------------
+# CARRITO (MODELO REAL)
+# -----------------------------
+class Carrito(models.Model):
+    """
+    Carrito real asociado a un usuario.
+    Un usuario tiene un carrito activo.
+    """
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Carrito de {self.usuario.username}"
+
+
+# -----------------------------
+# ITEMS DEL CARRITO
+# -----------------------------
+class CarritoItem(models.Model):
+    """
+    Items dentro del carrito.
+    Guarda producto, cantidad, nota opcional.
+    """
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE, related_name="items")
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    nota = models.TextField(blank=True, null=True)
+    precio_unitario = models.DecimalField(max_digits=8, decimal_places=2)
+
+    def subtotal(self):
+        return self.cantidad * self.precio_unitario
+
+    def __str__(self):
+        return f"{self.cantidad} × {self.producto.nombre}"
