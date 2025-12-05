@@ -93,4 +93,7 @@ urlpatterns = [
     # Pedidos (API)
     path('api/pedidos/', views_api.api_pedidos),
     path('api/pedidos/<int:pedido_id>/', views_api.api_pedido_detalle),
+    path("api/registro/", views_api.api_registro), 
+    
 ]
+

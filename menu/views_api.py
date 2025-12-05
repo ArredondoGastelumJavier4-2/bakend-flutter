@@ -366,3 +366,108 @@ def api_pedido_detalle(request, pedido_id):
 
     return JsonResponse(data, status=200)
 
+from django.contrib.auth.models import User
+from .models import Perfil, Carrito
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+@csrf_exempt
+def api_registro(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
+    email = data.get("email")
+    password = data.get("password")
+    avatar_default = data.get("avatar_default", "imagen01.png")
+
+    if not all([first_name, last_name, email, password]):
+        return JsonResponse({"error": "Faltan campos"}, status=400)
+
+    if User.objects.filter(username=email).exists():
+        return JsonResponse({"error": "El usuario ya existe"}, status=400)
+
+    # Crear usuario
+    user = User.objects.create_user(
+        username=email,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        password=password,
+        is_staff=False,
+        is_superuser=False
+    )
+
+    # Crear perfil
+    perfil = Perfil.objects.create(
+        usuario=user,
+        avatar_default=avatar_default
+    )
+
+    # Crear carrito
+    Carrito.objects.create(usuario=user)
+
+    return JsonResponse({
+        "message": "Usuario registrado correctamente",
+        "user_id": user.id
+    }, status=201)
+
+from django.contrib.auth.models import User
+from .models import Perfil, Carrito
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+@csrf_exempt
+def api_registro(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
+    email = data.get("email")
+    password = data.get("password")
+    avatar_default = data.get("avatar_default", "imagen01.png")
+
+    if not all([first_name, last_name, email, password]):
+        return JsonResponse({"error": "Faltan campos"}, status=400)
+
+    if User.objects.filter(username=email).exists():
+        return JsonResponse({"error": "El usuario ya existe"}, status=400)
+
+    # Crear usuario
+    user = User.objects.create_user(
+        username=email,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        password=password,
+        is_staff=False,
+        is_superuser=False
+    )
+
+    # Crear perfil
+    perfil = Perfil.objects.create(
+        usuario=user,
+        avatar_default=avatar_default
+    )
+
+    # Crear carrito
+    Carrito.objects.create(usuario=user)
+
+    return JsonResponse({
+        "message": "Usuario registrado correctamente",
+        "user_id": user.id
+    }, status=201)
